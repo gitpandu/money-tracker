@@ -1,0 +1,9 @@
+node_modules
+dist
+.env
+.DS_Store
+data/*.db
+data/*.db-shm
+data/*.db-wal
+data/receipts/*
+!data/receipts/.gitkeep
