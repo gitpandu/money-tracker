@@ -97,8 +97,8 @@ export default function App() {
               txns={currentTxns}
               categories={categories}
               t={t}
-              onSaveTxn={async (tx, receipt) => {
-                if (tx.id) await updateTxn(tx.id, tx, receipt);
+              onSaveTxn={async (tx, receipt, removeReceipt) => {
+                if (tx.id) await updateTxn(tx.id, tx, receipt, removeReceipt);
                 else await createTxn(tx, receipt);
               }}
               onDeleteTxn={removeTxn}
