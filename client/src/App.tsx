@@ -112,6 +112,7 @@ export default function App() {
               categories={categories}
               budgets={budgets}
               allCycles={cycles}
+              activeCycleId={activeCycleId}
               t={t}
               onSaveBudget={saveBudget}
               onToggleActive={toggleBudgetActive}

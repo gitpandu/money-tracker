@@ -3,20 +3,21 @@ import { Budget } from '../types';
 import { Strings } from '../utils/i18n';
 
 interface Props {
-  budget: Budget;
+  budget: Partial<Budget> & Pick<Budget, 'cycle_id' | 'category_id'>;
   catName: string;
   t: Strings;
   onClose: () => void;
-  onSave: (b: Budget) => void;
+  onSave: (b: Partial<Budget>) => void;
 }
 
 export function BudgetModal({ budget, catName, t, onClose, onSave }: Props) {
-  const [limit, setLimit] = useState(budget.limit_amount.toString());
-  const [note, setNote] = useState(budget.note || "");
+  const [limit, setLimit] = useState(budget.limit_amount?.toString() || '');
+  const [note, setNote] = useState(budget.note || '');
+  const title = budget.id ? t.editBudget : t.addBudget;
 
   function save() {
     if (!limit) return;
-    onSave({ ...budget, limit_amount: parseInt(limit), note });
+    onSave({ ...budget, limit_amount: parseInt(limit, 10), note });
     onClose();
   }
 
@@ -24,7 +25,7 @@ export function BudgetModal({ budget, catName, t, onClose, onSave }: Props) {
     <div className="overlay" onClick={onClose}>
       <div className="sheet" onClick={e => e.stopPropagation()}>
         <div className="sheet-handle" />
-        <div className="sheet-title">{t.editBudget} — {catName}</div>
+        <div className="sheet-title">{title} - {catName}</div>
         <div className="field">
           <label className="field-label">{t.limit}</label>
           <input className="field-input" type="number" value={limit} onChange={e => setLimit(e.target.value)} />

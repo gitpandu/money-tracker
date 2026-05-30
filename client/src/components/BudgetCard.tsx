@@ -13,11 +13,13 @@ interface Props {
   budgets: Budget[];
   allCycles: BudgetCycle[];
   t: Strings;
+  canCreateBudget: boolean;
+  onCreateBudget: (category: Category) => void;
   onToggleActive: (id: number) => void;
   onEditBudget: (budget: Budget, catName: string) => void;
 }
 
-export function BudgetCard({ parentCategory, subCategories, allTxns, currentTxns, budgets, allCycles, t, onToggleActive, onEditBudget }: Props) {
+export function BudgetCard({ parentCategory, subCategories, allTxns, currentTxns, budgets, allCycles, t, canCreateBudget, onCreateBudget, onToggleActive, onEditBudget }: Props) {
   function spentFor(catId: number, txnSet: Transaction[]): number {
     const subs = subCategories.filter(c => c.parent_id === catId);
     if (subs.length) return subs.reduce((s, c) => s + spentFor(c.id, txnSet), 0);
@@ -81,8 +83,16 @@ export function BudgetCard({ parentCategory, subCategories, allTxns, currentTxns
                 {subCategories.length > 0 ? item.name : (item.icon || "") + " " + item.name}
               </span>
               <div className="bsub-acts">
-                {b && <button className={`bsub-toggle ${b.active ? "on" : ""}`} onClick={() => onToggleActive(b.id)}>{b.active ? <>{Ico.check} {t.on}</> : t.off}</button>}
-                {b && <button className="icon-btn" onClick={() => onEditBudget(b, item.name)}>{Ico.edit}</button>}
+                {b ? (
+                  <>
+                    <button className={`bsub-toggle ${b.active ? "on" : ""}`} onClick={() => onToggleActive(b.id)}>{b.active ? <>{Ico.check} {t.on}</> : t.off}</button>
+                    <button className="icon-btn" onClick={() => onEditBudget(b, item.name)}>{Ico.edit}</button>
+                  </>
+                ) : (
+                  <button className="bsub-toggle" disabled={!canCreateBudget} onClick={() => onCreateBudget(item)}>
+                    {Ico.plus} {t.setBudget}
+                  </button>
+                )}
               </div>
             </div>
             <BudgetBar spent={sp} budget={b} />

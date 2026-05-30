@@ -11,15 +11,20 @@ interface Props {
   categories: Category[];
   budgets: Budget[];
   allCycles: BudgetCycle[];
+  activeCycleId: string;
   t: Strings;
   onSaveBudget: (budget: Partial<Budget>) => void;
   onToggleActive: (id: number) => void;
 }
 
-export function BudgetsPage({ currentTxns, allTxns, categories, budgets, allCycles, t, onSaveBudget, onToggleActive }: Props) {
-  const [editBudget, setEditBudget] = useState<{budget: Budget, catName: string} | null>(null);
+type BudgetDraft = Partial<Budget> & Pick<Budget, 'cycle_id' | 'category_id'>;
+
+export function BudgetsPage({ currentTxns, allTxns, categories, budgets, allCycles, activeCycleId, t, onSaveBudget, onToggleActive }: Props) {
+  const [editBudget, setEditBudget] = useState<{ budget: BudgetDraft; catName: string } | null>(null);
 
   const parents = categories.filter(c => !c.parent_id && c.type === "expense");
+  const currentCycleId = Number(activeCycleId);
+  const canCreateBudget = Number.isFinite(currentCycleId) && activeCycleId !== "";
 
   function spentFor(catId: number, txnSet: Transaction[]): number {
     const subs = categories.filter(c => c.parent_id === catId);
@@ -49,6 +54,20 @@ export function BudgetsPage({ currentTxns, allTxns, categories, budgets, allCycl
           budgets={budgets}
           allCycles={allCycles}
           t={t}
+          canCreateBudget={canCreateBudget}
+          onCreateBudget={(category) => {
+            if (!canCreateBudget) return;
+            setEditBudget({
+              budget: {
+                cycle_id: currentCycleId,
+                category_id: category.id,
+                active: 1,
+                limit_amount: 0,
+                note: '',
+              },
+              catName: category.name,
+            });
+          }}
           onToggleActive={onToggleActive}
           onEditBudget={(b, name) => setEditBudget({ budget: b, catName: name })}
         />
