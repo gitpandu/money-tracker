@@ -3,25 +3,18 @@ import { BudgetCycle } from '../types';
 
 interface Props {
   title: string;
-  darkMode: boolean;
-  onToggleDarkMode: () => void;
   showCycleSelector?: boolean;
   cycles: BudgetCycle[];
   activeCycleId: string;
   onCycleChange: (id: string) => void;
 }
 
-export function Topbar({ title, darkMode, onToggleDarkMode, showCycleSelector, cycles, activeCycleId, onCycleChange }: Props) {
+export function Topbar({ title, showCycleSelector, cycles, activeCycleId, onCycleChange }: Props) {
   return (
     <div className="topbar">
       <div className="topbar-row1">
         <div>
           <div className="topbar-title">{title}</div>
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <button onClick={onToggleDarkMode} style={{ color: "var(--ink3)", padding: 4, background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center" }}>
-            {darkMode ? Ico.sun : Ico.moon}
-          </button>
         </div>
       </div>
 

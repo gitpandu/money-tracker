@@ -1,10 +1,11 @@
-import { useState, useRef, useEffect } from 'react';
-import { useStrings, Language } from './utils/i18n';
+import { useState, useRef } from 'react';
+import { useStrings } from './utils/i18n';
 import { useCycles } from './hooks/useCycles';
 import { useCategories } from './hooks/useCategories';
 import { useTransactions } from './hooks/useTransactions';
 import { useBudgets } from './hooks/useBudgets';
 import { useGoals } from './hooks/useGoals';
+import { useSettings } from './hooks/useSettings';
 import { txnsInCycle } from './utils/dates';
 import { Ico } from './components/icons';
 
@@ -29,10 +30,7 @@ const TAB_ICONS: Record<string, keyof typeof Ico> = {
 
 export default function App() {
   const [tab, setTab] = useState("dashboard");
-  const [lang, setLang] = useState<Language>("en");
-  const [darkMode, setDarkMode] = useState(
-    typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches
-  );
+  const { lang, setLang, darkMode, setDarkMode } = useSettings();
 
   const [fabOpen, setFabOpen] = useState(false);
   const [showFab, setShowFab] = useState(true);
@@ -50,10 +48,6 @@ export default function App() {
 
   const activeCycle = cycles.find(c => c.id.toString() === activeCycleId);
   const currentTxns = txnsInCycle(transactions, activeCycle);
-
-  useEffect(() => {
-    document.documentElement.setAttribute("data-theme", darkMode ? "dark" : "light");
-  }, [darkMode]);
 
   function handleScroll(e: React.UIEvent<HTMLDivElement>) {
     const currentScroll = e.currentTarget.scrollTop;
@@ -83,8 +77,6 @@ export default function App() {
       <div className="main-col">
         <Topbar
           title={tab === "dashboard" ? t.home : TAB_LBL[tab]}
-          darkMode={darkMode}
-          onToggleDarkMode={() => setDarkMode(d => !d)}
           showCycleSelector={tab === "dashboard"}
           cycles={cycles}
           activeCycleId={activeCycleId}
