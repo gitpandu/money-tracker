@@ -15,42 +15,50 @@ export function useCycles(cycleDay: number = 25) {
     setLoading(true);
     try {
       let data = await api.getCycles();
+      const now = new Date();
       
-      if (data.length === 0) {
-        const now = new Date();
+      const fmt = (d: Date) => {
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${y}-${m}-${day}`;
+      };
+
+      const getExpectedCycle = (date: Date) => {
         let start: Date;
-        
-        if (now.getDate() >= cycleDay) {
-          start = new Date(now.getFullYear(), now.getMonth(), cycleDay);
+        if (date.getDate() >= cycleDay) {
+          start = new Date(date.getFullYear(), date.getMonth(), cycleDay);
         } else {
-          start = new Date(now.getFullYear(), now.getMonth() - 1, cycleDay);
+          start = new Date(date.getFullYear(), date.getMonth() - 1, cycleDay);
         }
-
         const end = new Date(start.getFullYear(), start.getMonth() + 1, cycleDay - 1);
-        
-        // Label using the month where the cycle ends (usually the "main" month)
-        const label = end.toLocaleString('default', { month: 'long', year: 'numeric' });
-        
-        const fmt = (d: Date) => {
-          const y = d.getFullYear();
-          const m = String(d.getMonth() + 1).padStart(2, '0');
-          const day = String(d.getDate()).padStart(2, '0');
-          return `${y}-${m}-${day}`;
-        };
+        return { start, end };
+      };
 
-        const start_date = fmt(start);
-        const end_date = fmt(end);
+      const todayFmt = fmt(now);
+      const { start: expectedStart, end: expectedEnd } = getExpectedCycle(now);
+      const expectedStartFmt = fmt(expectedStart);
+
+      // Check if we need to create a new cycle:
+      // 1. No cycles exist
+      // 2. The latest cycle has ended
+      const latestCycle = data[0]; // data is sorted DESC by start_date
+      
+      if (!latestCycle || todayFmt > latestCycle.end_date) {
+        const label = expectedEnd.toLocaleString('default', { month: 'long', year: 'numeric' });
         
         const newCycle = await api.createCycle({
           label,
-          start_date,
-          end_date
+          start_date: expectedStartFmt,
+          end_date: fmt(expectedEnd)
         });
-        data = [newCycle];
+        
+        // Add new cycle to the list
+        data = [newCycle, ...data];
       }
 
       setCycles(data);
-      if (data.length > 0 && !activeCycleId) {
+      if (data.length > 0) {
         setActiveCycleId(data[0].id.toString());
       }
     } catch (err) {
