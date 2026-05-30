@@ -16,15 +16,23 @@ interface Props {
   setLang: (lang: Language) => void;
   darkMode: boolean;
   setDarkMode: (dark: boolean) => void;
+  cycleDay: number;
+  setCycleDay: (day: number) => void;
+  carryOver: boolean;
+  setCarryOver: (co: boolean) => void;
+  copyBudgets: boolean;
+  setCopyBudgets: (cb: boolean) => void;
   t: Strings;
   onSaveCategory: (cat: Partial<Category>) => void;
   onDeleteCategory: (id: number) => void;
 }
 
-export function SettingsPage({ categories, cycles, activeCycleId, allTxns, lang, setLang, darkMode, setDarkMode, t, onSaveCategory, onDeleteCategory }: Props) {
-  const [cycleDay, setCycleDay] = useState(25);
-  const [carryOver, setCarryOver] = useState(true);
-  const [copyBudgets, setCopyBdg] = useState(true);
+export function SettingsPage({ 
+  categories, cycles, activeCycleId, allTxns, 
+  lang, setLang, darkMode, setDarkMode, 
+  cycleDay, setCycleDay, carryOver, setCarryOver, copyBudgets, setCopyBudgets,
+  t, onSaveCategory, onDeleteCategory 
+}: Props) {
   const [exportCycleId, setExportCycleId] = useState(activeCycleId);
 
   const [modal, setModal] = useState<{ mode: 'add' | 'edit', cat?: Category } | null>(null);
@@ -99,7 +107,7 @@ export function SettingsPage({ categories, cycles, activeCycleId, allTxns, lang,
         </div>
         <div className="setting-row">
           <div><div className="setting-lbl">{t.copyBudgets}</div><div className="setting-desc">{t.copyBudgetsDesc}</div></div>
-          <label className="toggle-wrap"><input type="checkbox" checked={copyBudgets} onChange={e => setCopyBdg(e.target.checked)} /><span className="toggle-slider" /></label>
+          <label className="toggle-wrap"><input type="checkbox" checked={copyBudgets} onChange={e => setCopyBudgets(e.target.checked)} /><span className="toggle-slider" /></label>
         </div>
         <div className="setting-row">
           <div><div className="setting-lbl">{t.darkMode}</div><div className="setting-desc">{t.darkModeDesc}</div></div>

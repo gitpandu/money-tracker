@@ -30,7 +30,13 @@ const TAB_ICONS: Record<string, keyof typeof Ico> = {
 
 export default function App() {
   const [tab, setTab] = useState("dashboard");
-  const { lang, setLang, darkMode, setDarkMode } = useSettings();
+  const { 
+    lang, setLang, 
+    darkMode, setDarkMode,
+    cycleDay, setCycleDay,
+    carryOver, setCarryOver,
+    copyBudgets, setCopyBudgets
+  } = useSettings();
 
   const [fabOpen, setFabOpen] = useState(false);
   const [showFab, setShowFab] = useState(true);
@@ -40,7 +46,7 @@ export default function App() {
   const TAB_LBL: Record<string, string> = { dashboard: t.home, budgets: t.budgets, goals: t.goals, reports: t.reports, settings: t.settings };
 
   // Data Hooks
-  const { cycles, activeCycleId, setActiveCycleId, loading: cyclesLoading } = useCycles();
+  const { cycles, activeCycleId, setActiveCycleId, loading: cyclesLoading } = useCycles(cycleDay);
   const { categories, save: saveCategory, remove: removeCategory, loading: catsLoading } = useCategories();
   const { transactions, create: createTxn, update: updateTxn, remove: removeTxn, loading: txnsLoading } = useTransactions();
   const { budgets, save: saveBudget, toggleActive: toggleBudgetActive } = useBudgets(activeCycleId);
@@ -140,6 +146,12 @@ export default function App() {
               setLang={setLang}
               darkMode={darkMode}
               setDarkMode={setDarkMode}
+              cycleDay={cycleDay}
+              setCycleDay={setCycleDay}
+              carryOver={carryOver}
+              setCarryOver={setCarryOver}
+              copyBudgets={copyBudgets}
+              setCopyBudgets={setCopyBudgets}
               t={t}
               onSaveCategory={saveCategory}
               onDeleteCategory={removeCategory}
