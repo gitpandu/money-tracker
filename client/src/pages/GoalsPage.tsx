@@ -32,7 +32,7 @@ export function GoalsPage({ goals, t, onSaveGoal, onDeleteGoal, onContribute }: 
           goal={g}
           t={t}
           onEdit={(goal) => setModal({ mode: 'edit', goal })}
-          onDelete={(id) => setConfirm(g)}
+          onDelete={() => setConfirm(g)}
           onContribute={onContribute}
         />
       ))}

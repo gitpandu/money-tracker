@@ -1,4 +1,4 @@
-import { Transaction, Category } from '../../../shared/types';
+import type { Transaction, Category } from '../../../shared/types';
 
 export function exportCSV(txns: Transaction[], cats: Category[], cycleLabel: string) {
   const getCat = (id: number) => cats.find(c => c.id === id);

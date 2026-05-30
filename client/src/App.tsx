@@ -45,7 +45,7 @@ export default function App() {
   const { cycles, activeCycleId, setActiveCycleId, loading: cyclesLoading } = useCycles();
   const { categories, save: saveCategory, remove: removeCategory, loading: catsLoading } = useCategories();
   const { transactions, create: createTxn, update: updateTxn, remove: removeTxn, loading: txnsLoading } = useTransactions();
-  const { budgets, save: saveBudget, toggleActive: toggleBudgetActive, loading: bdgsLoading } = useBudgets(activeCycleId);
+  const { budgets, save: saveBudget, toggleActive: toggleBudgetActive } = useBudgets(activeCycleId);
   const { goals, save: saveGoal, remove: removeGoal, contribute: contributeGoal } = useGoals();
 
   const activeCycle = cycles.find(c => c.id.toString() === activeCycleId);

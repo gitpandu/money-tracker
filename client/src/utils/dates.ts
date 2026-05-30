@@ -1,4 +1,4 @@
-import { Transaction, BudgetCycle } from '../../../shared/types';
+import type { Transaction, BudgetCycle } from '../../../shared/types';
 
 export function txnsInCycle(txns: Transaction[], cycle: BudgetCycle | undefined) {
   if (!cycle) return txns;

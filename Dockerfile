@@ -5,6 +5,7 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 COPY tsconfig.node.json ./
+COPY tsconfig.app.json ./
 COPY vite.config.ts ./
 
 # Install all dependencies (including dev for build)
@@ -32,6 +33,7 @@ RUN npm ci --omit=dev
 
 # Copy built files
 COPY --from=builder /app/dist/server ./server
+COPY --from=builder /app/server/db/migrations ./server/db/migrations
 COPY --from=builder /app/dist ./server/public
 # Remove the built server files from the public folder to avoid duplication/confusion
 RUN rm -rf ./server/public/server
@@ -44,4 +46,4 @@ ENV PORT=3000
 EXPOSE 3000
 
 # Start server
-CMD ["node", "server/server/index.js"]
+CMD ["node", "server/index.js"]

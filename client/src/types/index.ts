@@ -1,4 +1,4 @@
-export * from '../../../shared/types';
+export type * from '../../../shared/types';
 
 export interface ReceiptData {
   src: string;

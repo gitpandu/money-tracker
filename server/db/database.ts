@@ -1,8 +1,9 @@
 import { DatabaseSync } from 'node:sqlite';
 import { readFileSync, readdirSync, existsSync, mkdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const DB_PATH = process.env.DB_PATH || join('data', 'money-tracker.db');
+const DB_PATH = process.env.DB_PATH || join(process.cwd(), 'data', 'money-tracker.db');
 
 const dataDir = dirname(DB_PATH);
 if (!existsSync(dataDir)) {
@@ -23,7 +24,7 @@ export function runMigrations(): void {
     )
   `);
 
-  const migrationsDir = join('server', 'db', 'migrations');
+  const migrationsDir = join(dirname(fileURLToPath(import.meta.url)), 'migrations');
   const files = readdirSync(migrationsDir)
     .filter(f => f.endsWith('.sql'))
     .sort();

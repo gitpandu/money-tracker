@@ -19,7 +19,7 @@ app.use(cors());
 app.use(express.json());
 
 // Ensure uploads directory exists
-const uploadsDir = join('data', 'receipts');
+const uploadsDir = join(process.cwd(), 'data', 'receipts');
 if (!existsSync(uploadsDir)) {
   mkdirSync(uploadsDir, { recursive: true });
 }
@@ -36,10 +36,10 @@ app.use('/api/budgets', budgetsRouter);
 app.use('/api/reports', reportsRouter);
 
 // Serve frontend in production
-const publicDir = join('server', 'public');
+const publicDir = join(process.cwd(), 'server', 'public');
 if (existsSync(publicDir)) {
   app.use(express.static(publicDir));
-  app.get('*', (_req, res) => {
+  app.get(/.*/, (_req, res) => {
     res.sendFile(join(publicDir, 'index.html'));
   });
 }
