@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useStrings } from './utils/i18n';
 import { useCycles } from './hooks/useCycles';
 import { useCategories } from './hooks/useCategories';
@@ -8,6 +8,9 @@ import { useGoals } from './hooks/useGoals';
 import { useSettings } from './hooks/useSettings';
 import { txnsInCycle } from './utils/dates';
 import { Ico } from './components/icons';
+import { setApiHandlers } from './utils/api';
+import { AppProvider } from './context/AppProvider';
+import { useAppContext } from './context/useAppContext';
 
 // Components
 import { Sidebar } from './components/Sidebar';
@@ -15,6 +18,8 @@ import { Topbar } from './components/Topbar';
 import { BottomNavigation } from './components/BottomNavigation';
 import { FAB } from './components/FAB';
 import { TransactionModal } from './components/TransactionModal';
+import { LoadingScreen } from './components/LoadingScreen';
+import { ErrorToast } from './components/ErrorToast';
 
 // Pages
 import { DashboardPage } from './pages/DashboardPage';
@@ -28,15 +33,25 @@ const TAB_ICONS: Record<string, keyof typeof Ico> = {
   dashboard: "home", budgets: "budget", goals: "goal", reports: "chart", settings: "cog"
 };
 
-export default function App() {
+function AppContent() {
   const [tab, setTab] = useState("dashboard");
-  const { 
-    lang, setLang, 
+  const {
+    lang, setLang,
     darkMode, setDarkMode,
     cycleDay, setCycleDay,
     carryOver, setCarryOver,
     copyBudgets, setCopyBudgets
   } = useSettings();
+
+  const { loading, error, startLoading, stopLoading, setError } = useAppContext();
+
+  useEffect(() => {
+    setApiHandlers({
+      onStart: startLoading,
+      onEnd: stopLoading,
+      onError: (msg) => setError(msg)
+    });
+  }, [startLoading, stopLoading, setError]);
 
   const [fabOpen, setFabOpen] = useState(false);
   const [showFab, setShowFab] = useState(true);
@@ -46,9 +61,9 @@ export default function App() {
   const TAB_LBL: Record<string, string> = { dashboard: t.home, budgets: t.budgets, goals: t.goals, reports: t.reports, settings: t.settings };
 
   // Data Hooks
-  const { cycles, activeCycleId, setActiveCycleId, loading: cyclesLoading } = useCycles(cycleDay);
-  const { categories, save: saveCategory, remove: removeCategory, loading: catsLoading } = useCategories();
-  const { transactions, create: createTxn, update: updateTxn, remove: removeTxn, loading: txnsLoading } = useTransactions();
+  const { cycles, activeCycleId, setActiveCycleId } = useCycles(cycleDay);
+  const { categories, save: saveCategory, remove: removeCategory } = useCategories();
+  const { transactions, create: createTxn, update: updateTxn, remove: removeTxn } = useTransactions();
   const { budgets, save: saveBudget, toggleActive: toggleBudgetActive } = useBudgets(activeCycleId);
   const { goals, save: saveGoal, remove: removeGoal, contribute: contributeGoal } = useGoals();
 
@@ -62,10 +77,6 @@ export default function App() {
     const isNearTop = currentScroll < 40;
     setShowFab(isScrollingUp || isNearTop);
     scrollRef.current = currentScroll;
-  }
-
-  if (cyclesLoading || catsLoading || txnsLoading) {
-    return <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center' }}>Loading...</div>;
   }
 
   return (
@@ -184,6 +195,17 @@ export default function App() {
         activeTab={tab}
         onTabChange={setTab}
       />
+
+      {loading && <LoadingScreen />}
+      {error && <ErrorToast message={error} onClose={() => setError(null)} />}
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <AppProvider>
+      <AppContent />
+    </AppProvider>
   );
 }

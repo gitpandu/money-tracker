@@ -1,26 +1,22 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { api } from '../utils/api';
 import { Category } from '../types';
 
 export function useCategories() {
   const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadCategories();
-  }, []);
-
-  async function loadCategories() {
-    setLoading(true);
+  const loadCategories = useCallback(async () => {
     try {
       const data = await api.getCategories();
       setCategories(data);
     } catch (err) {
       console.error(err);
-    } finally {
-      setLoading(false);
     }
-  }
+  }, []);
+
+  useEffect(() => {
+    loadCategories();
+  }, [loadCategories]);
 
   async function save(cat: Partial<Category>) {
     if (cat.id) {
@@ -39,5 +35,5 @@ export function useCategories() {
     setCategories(prev => prev.filter(c => c.id !== id && c.parent_id !== id));
   }
 
-  return { categories, loading, save, remove, refresh: loadCategories };
+  return { categories, save, remove, refresh: loadCategories };
 }

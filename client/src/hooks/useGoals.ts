@@ -1,26 +1,22 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { api } from '../utils/api';
 import { Goal } from '../types';
 
 export function useGoals() {
   const [goals, setGoals] = useState<Goal[]>([]);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadGoals();
-  }, []);
-
-  async function loadGoals() {
-    setLoading(true);
+  const loadGoals = useCallback(async () => {
     try {
       const data = await api.getGoals();
       setGoals(data);
     } catch (err) {
       console.error(err);
-    } finally {
-      setLoading(false);
     }
-  }
+  }, []);
+
+  useEffect(() => {
+    loadGoals();
+  }, [loadGoals]);
 
   async function save(goal: Partial<Goal>) {
     if (goal.id) {
@@ -46,5 +42,5 @@ export function useGoals() {
     return save({ ...goal, saved: newSaved });
   }
 
-  return { goals, loading, save, remove, contribute, refresh: loadGoals };
+  return { goals, save, remove, contribute, refresh: loadGoals };
 }

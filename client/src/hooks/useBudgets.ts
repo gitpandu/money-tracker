@@ -1,26 +1,22 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { api } from '../utils/api';
 import { Budget } from '../types';
 
 export function useBudgets(cycleId?: string) {
   const [budgets, setBudgets] = useState<Budget[]>([]);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadBudgets();
-  }, [cycleId]);
-
-  async function loadBudgets() {
-    setLoading(true);
+  const loadBudgets = useCallback(async () => {
     try {
       const data = await api.getBudgets(cycleId);
       setBudgets(data);
     } catch (err) {
       console.error(err);
-    } finally {
-      setLoading(false);
     }
-  }
+  }, [cycleId]);
+
+  useEffect(() => {
+    loadBudgets();
+  }, [loadBudgets]);
 
   async function save(budget: Partial<Budget>) {
     if (budget.id) {
@@ -40,5 +36,5 @@ export function useBudgets(cycleId?: string) {
     return save({ ...budget, active: budget.active ? 0 : 1 });
   }
 
-  return { budgets, loading, save, toggleActive, refresh: loadBudgets };
+  return { budgets, save, toggleActive, refresh: loadBudgets };
 }

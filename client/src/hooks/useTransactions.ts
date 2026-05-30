@@ -1,25 +1,22 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { api } from '../utils/api';
 import { Transaction, ReceiptData } from '../types';
 
 export function useTransactions(cycleId?: string) {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadTransactions();
-  }, [cycleId]);
-  async function loadTransactions() {
-    setLoading(true);
+  const loadTransactions = useCallback(async () => {
     try {
       const data = await api.getTransactions(cycleId);
       setTransactions(data);
     } catch (err) {
       console.error(err);
-    } finally {
-      setLoading(false);
     }
-  }
+  }, [cycleId]);
+
+  useEffect(() => {
+    loadTransactions();
+  }, [loadTransactions]);
 
   async function create(tx: any, receipt?: ReceiptData | null) {
     const newTx = await api.createTransaction(tx, receipt);
@@ -38,5 +35,5 @@ export function useTransactions(cycleId?: string) {
     setTransactions(prev => prev.filter(t => t.id !== id));
   }
 
-  return { transactions, loading, create, update, remove, refresh: loadTransactions };
+  return { transactions, create, update, remove, refresh: loadTransactions };
 }

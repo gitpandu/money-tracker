@@ -1,22 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { api } from '../utils/api';
 import { BudgetCycle } from '../types';
 
 export function useCycles(cycleDay: number = 25) {
   const [cycles, setCycles] = useState<BudgetCycle[]>([]);
   const [activeCycleId, setActiveCycleId] = useState<string>('');
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadCycles();
-  }, [cycleDay]);
-
-  async function loadCycles() {
-    setLoading(true);
+  const loadCycles = useCallback(async () => {
     try {
       let data = await api.getCycles();
       const now = new Date();
-      
+
       const fmt = (d: Date) => {
         const y = d.getFullYear();
         const m = String(d.getMonth() + 1).padStart(2, '0');
@@ -37,23 +31,17 @@ export function useCycles(cycleDay: number = 25) {
 
       const todayFmt = fmt(now);
       const { start: expectedStart, end: expectedEnd } = getExpectedCycle(now);
-      const expectedStartFmt = fmt(expectedStart);
+      const latestCycle = data[0];
 
-      // Check if we need to create a new cycle:
-      // 1. No cycles exist
-      // 2. The latest cycle has ended
-      const latestCycle = data[0]; // data is sorted DESC by start_date
-      
       if (!latestCycle || todayFmt > latestCycle.end_date) {
         const label = expectedEnd.toLocaleString('default', { month: 'long', year: 'numeric' });
-        
+
         const newCycle = await api.createCycle({
           label,
-          start_date: expectedStartFmt,
+          start_date: fmt(expectedStart),
           end_date: fmt(expectedEnd)
         });
-        
-        // Add new cycle to the list
+
         data = [newCycle, ...data];
       }
 
@@ -63,10 +51,12 @@ export function useCycles(cycleDay: number = 25) {
       }
     } catch (err) {
       console.error(err);
-    } finally {
-      setLoading(false);
     }
-  }
+  }, [cycleDay]);
+
+  useEffect(() => {
+    loadCycles();
+  }, [loadCycles]);
 
   async function create(cycle: Partial<BudgetCycle>) {
     const newCycle = await api.createCycle(cycle);
@@ -74,5 +64,5 @@ export function useCycles(cycleDay: number = 25) {
     return newCycle;
   }
 
-  return { cycles, activeCycleId, setActiveCycleId, loading, create, refresh: loadCycles };
+  return { cycles, activeCycleId, setActiveCycleId, create, refresh: loadCycles };
 }
