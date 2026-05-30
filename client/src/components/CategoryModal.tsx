@@ -78,20 +78,22 @@ export function CategoryModal({ initial, categories, t, onClose, onSave }: Props
             <label className="field-label">{t.icon}</label>
             <div className="emoji-grid">
               {EMOJI_OPTIONS.map(e => (
-                <button key={e} className={`emoji-opt ${icon === e ? "on" : ""}`} onClick={() => setIcon(e)}>{e}</button>
+                <button key={e} type="button" className={`emoji-opt ${icon === e ? "on" : ""}`} onClick={() => setIcon(e)}>{e}</button>
               ))}
             </div>
           </div>
         )}
 
-        <div className="field">
-          <label className="field-label">{isSub ? t.accentColor : t.color}</label>
-          <div className="color-grid">
-            {COLOR_OPTIONS.map(c => (
-              <button key={c} className={`color-sw ${color === c ? "on" : ""}`} style={{ background: c }} onClick={() => setColor(c)} />
-            ))}
+        {isSub && (
+          <div className="field">
+            <label className="field-label">{t.accentColor}</label>
+            <div className="color-grid">
+              {COLOR_OPTIONS.map(c => (
+                <button key={c} type="button" className={`color-sw ${color === c ? "on" : ""}`} style={{ background: c }} onClick={() => setColor(c)} />
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         <div className="sheet-btns">
           <button className="btn btn-ghost" onClick={onClose}>{t.cancel}</button>
