@@ -30,7 +30,7 @@ export function useSettings() {
 
   const [shortCurrency, setShortCurrency] = useState<boolean>(() => {
     const saved = localStorage.getItem("mt_shortCurrency");
-    return saved !== null ? saved === "true" : true;
+    return saved !== null ? saved === "true" : false;
   });
 
   useEffect(() => {
