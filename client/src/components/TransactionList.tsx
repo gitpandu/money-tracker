@@ -44,7 +44,7 @@ export function TransactionList({ txns, categories, t, onSave, onDelete }: Props
   }
 
   function catLabel(cat?: Category) {
-    if (!cat) return "Uncategorised";
+    if (!cat) return t.uncategorized;
     if (cat.parent_id) {
       const p = getCat(cat.parent_id);
       return p ? `${p.name} · ${cat.name}` : cat.name;

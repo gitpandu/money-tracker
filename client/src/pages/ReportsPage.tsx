@@ -34,11 +34,9 @@ export function ReportsPage({ allTxns, categories, activeCycle, t }: Props) {
     const getCat = (id: number) => categories.find(c => c.id === id);
     txns.filter(x => x.type === "expense").forEach(x => {
       const cat = getCat(x.category_id);
-      if (!cat) return;
-      const par = cat.parent_id ? getCat(cat.parent_id) : cat;
-      if (par) {
-        map[par.name] = (map[par.name] || 0) + x.amount;
-      }
+      const par = cat ? (cat.parent_id ? getCat(cat.parent_id) : cat) : null;
+      const name = par ? par.name : t.uncategorized;
+      map[name] = (map[name] || 0) + x.amount;
     });
     return Object.entries(map).map(([name, value]) => ({ name, value }));
   }, [txns, categories]);
