@@ -132,6 +132,16 @@
   background: var(--cream);
 }
 
+.txn-date-header {
+  padding: 8px 14px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink3);
+  background: var(--stone1);
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+
 .txn-icon {
   width: 36px;
   height: 36px;
