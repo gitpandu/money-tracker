@@ -3,7 +3,7 @@ import { Category } from '../types';
 import { Strings } from '../utils/i18n';
 import { Ico } from './icons';
 
-const EMOJI_OPTIONS = ["🍜", "🍽️", "🚗", "🏠", "💼", "💻", "🏥", "📚", "🎮", "✈️", "👗", "💊", "🐾", "🎁", "🏋️", "☕", "🍕", "🛍️", "🎵", "📱", "🏦", "🎓", "🌿", "🧴", "🛒", "🛡️", "🎯", "🏖️", "💍", "🚀", "🌟", "🎸"];
+const EMOJI_OPTIONS = ["🍜", "🍽️", "🚗", "🏠", "💼", "💻", "🏥", "📚", "🎮", "✈️", "👗", "💊", "🐾", "🎁", "🏋️", "☕", "🍕", "🛍️", "🎵", "📱", "🏦", "🎓", "🌿", "🧴", "🛒", "🛡️", "🎯", "🏖️", "💍", "🚀", "🌟", "🎸", "🍳", "🧼", "🚽", "🧻", "👶", "🍼", "💧", "👨", "👩"];
 const COLOR_OPTIONS = [
   "#e85d3a", "#f0944d", "#e8b84b", "#e85d7a",
   "#2eaa72", "#45c48a", "#6dd49a", "#3a9e5a",
@@ -11,6 +11,8 @@ const COLOR_OPTIONS = [
   "#2ab8a8", "#45d4c2", "#4ab8d4", "#6acce0",
   "#d45a8a", "#e07ab0", "#c45ac4", "#a45ae0",
   "#8a6a4a", "#b08a6a", "#c2674e", "#9e6b5f",
+  "#000000", "#ffffff", "#f5d7d7", "#d7f5d7",
+  "#d7e5f5", "#f5f5d7", "#f5d7f5",
 ];
 
 interface Props {
@@ -33,13 +35,13 @@ export function CategoryModal({ initial, categories, t, onClose, onSave }: Props
 
   function save() {
     if (!name) return;
-    onSave({ 
-      id: initial?.id, 
-      name, 
-      type, 
-      icon: isSub ? null : icon, 
-      color, 
-      parent_id: parentId ? parseInt(parentId) : null 
+    onSave({
+      id: initial?.id,
+      name,
+      type,
+      icon: isSub ? null : icon,
+      color,
+      parent_id: parentId ? parseInt(parentId) : null
     });
     onClose();
   }
@@ -49,7 +51,7 @@ export function CategoryModal({ initial, categories, t, onClose, onSave }: Props
       <div className="sheet" onClick={e => e.stopPropagation()}>
         <div className="sheet-handle" />
         <div className="sheet-title">{initial ? t.editCategory : t.addCategory}</div>
-        
+
         <div className="field">
           <div className="type-toggle">
             <button className={`type-btn inc ${type === "income" ? "on" : ""}`} onClick={() => { setType("income"); setPar(""); }}>{t.income}</button>
