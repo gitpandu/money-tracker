@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Transaction, Category, Budget, BudgetCycle } from '../types';
-import { Strings } from '../utils/i18n';
+import { Strings, Language } from '../utils/i18n';
 import { fmtShort } from '../utils/currency';
 import { BudgetCard } from '../components/BudgetCard';
 import { BudgetModal } from '../components/BudgetModal';
@@ -16,13 +16,14 @@ interface Props {
   shortCurrency: boolean;
   onSaveBudget: (budget: Partial<Budget>) => void;
   onToggleActive: (id: number) => void;
+  lang: Language;
 }
 
 type BudgetDraft = Partial<Budget> & Pick<Budget, 'cycle_id' | 'category_id'>;
 
 export function BudgetsPage({
   currentTxns, allTxns, categories, budgets, allCycles, activeCycleId,
-  t, shortCurrency, onSaveBudget, onToggleActive
+  t, shortCurrency, onSaveBudget, onToggleActive, lang
 }: Props) {
   const [editBudget, setEditBudget] = useState<{ budget: BudgetDraft; catName: string } | null>(null);
 
@@ -58,6 +59,7 @@ export function BudgetsPage({
           budgets={budgets}
           allCycles={allCycles}
           t={t}
+          lang={lang}
           shortCurrency={shortCurrency}
           canCreateBudget={canCreateBudget}
           onCreateBudget={(category) => {

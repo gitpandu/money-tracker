@@ -39,7 +39,13 @@ reportsRouter.get('/trend', (_req, res) => {
         if (t.type === 'income') income += t.amount;
         if (t.type === 'expense') expense += t.amount;
       }
-      result.push({ cycle: cycle.label, income, expense });
+      result.push({ 
+        cycle: cycle.label, 
+        start_date: cycle.start_date,
+        end_date: cycle.end_date,
+        income, 
+        expense 
+      });
     }
 
     res.json(result);

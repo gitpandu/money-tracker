@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Category, BudgetCycle, Transaction } from '../types';
 import { Strings, Language } from '../utils/i18n';
 import { exportCSV } from '../utils/exportCsv';
-import { txnsInCycle } from '../utils/dates';
+import { txnsInCycle, fmtCycle } from '../utils/dates';
 import { Ico } from '../components/icons';
 import { CategoryModal } from '../components/CategoryModal';
 import { ConfirmModal } from '../components/ConfirmModal';
@@ -45,7 +45,7 @@ export function SettingsPage({
     const selectedCycle = cycles.find(c => c.id.toString() === exportCycleId);
     if (!selectedCycle) return;
     const exportTxns = txnsInCycle(allTxns, selectedCycle);
-    exportCSV(exportTxns, categories, selectedCycle.label);
+    exportCSV(exportTxns, categories, fmtCycle(selectedCycle, lang));
   }
 
   function CatGroup({ title, type }: { title: string, type: 'income' | 'expense' }) {
@@ -141,20 +141,20 @@ export function SettingsPage({
         <div style={{ display: "flex", gap: 8, marginBottom: 10 }}>
           <div className="select-wrap">
             <select className="field-input" value={exportCycleId} onChange={(e) => setExportCycleId(e.target.value)} style={{ flex: 1 }}>
-              {cycles.map((c) => (<option key={c.id} value={c.id}>{c.label}</option>))}
+              {cycles.map((c) => (<option key={c.id} value={c.id}>{fmtCycle(c, lang)}</option>))}
             </select>
             <div className="select-arrow">{Ico.chevron}</div>
           </div>
         </div>
 
         <div style={{ fontSize: 12, color: "var(--ink3)", marginBottom: 10 }}>
-          {t.exportDesc} ({cycles.find((c) => c.id.toString() === exportCycleId)?.label})
+          {t.exportDesc} ({fmtCycle(cycles.find((c) => c.id.toString() === exportCycleId), lang)})
         </div>
 
         <button className="export-btn" onClick={handleExportCSV}>
           {Ico.download}
           {t.exportCSV} —{" "}
-          {cycles.find((c) => c.id.toString() === exportCycleId)?.label}
+          {fmtCycle(cycles.find((c) => c.id.toString() === exportCycleId), lang)}
         </button>
       </div>
 

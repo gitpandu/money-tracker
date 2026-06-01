@@ -62,7 +62,7 @@ function AppContent() {
   const TAB_LBL: Record<string, string> = { dashboard: t.home, budgets: t.budgets, goals: t.goals, reports: t.reports, settings: t.settings };
 
   // Data Hooks
-  const { cycles, activeCycleId, setActiveCycleId } = useCycles(cycleDay);
+  const { cycles, activeCycleId, setActiveCycleId } = useCycles(cycleDay, lang);
   const { categories, save: saveCategory, remove: removeCategory } = useCategories();
   const { transactions, create: createTxn, update: updateTxn, remove: removeTxn } = useTransactions();
   const { budgets, save: saveBudget, toggleActive: toggleBudgetActive } = useBudgets(activeCycleId);
@@ -90,6 +90,7 @@ function AppContent() {
         onTabChange={setTab}
         activeCycle={activeCycle}
         t={t}
+        lang={lang}
       />
 
       <div className="main-col">
@@ -99,6 +100,7 @@ function AppContent() {
           cycles={cycles}
           activeCycleId={activeCycleId}
           onCycleChange={setActiveCycleId}
+          lang={lang}
         />
 
         <div className="scroll-area" onScroll={handleScroll}>
@@ -128,6 +130,7 @@ function AppContent() {
               shortCurrency={shortCurrency}
               onSaveBudget={saveBudget}
               onToggleActive={toggleBudgetActive}
+              lang={lang}
             />
           )}
 
@@ -149,6 +152,7 @@ function AppContent() {
               activeCycle={activeCycle}
               t={t}
               shortCurrency={shortCurrency}
+              lang={lang}
             />
           )}
 

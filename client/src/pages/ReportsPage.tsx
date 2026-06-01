@@ -1,10 +1,10 @@
 import { useMemo, useState, useEffect } from 'react';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell } from 'recharts';
 import { Transaction, Category, BudgetCycle } from '../types';
-import { Strings } from '../utils/i18n';
+import { Strings, Language } from '../utils/i18n';
 import { fmt, fmtShort } from '../utils/currency';
 import { api } from '../utils/api';
-import { txnsInCycle } from '../utils/dates';
+import { txnsInCycle, fmtCycle } from '../utils/dates';
 
 const PIE_COLORS = ["#e85d3a", "#2eaa72", "#6b5fc7", "#e8b84b", "#4a7fc4", "#d45a8a"];
 
@@ -14,10 +14,11 @@ interface Props {
   activeCycle?: BudgetCycle;
   t: Strings;
   shortCurrency: boolean;
+  lang: Language;
 }
 
-export function ReportsPage({ allTxns, categories, activeCycle, t, shortCurrency }: Props) {
-  const [trendData, setTrendData] = useState<Array<{ cycle: string, income: number, expense: number }>>([]);
+export function ReportsPage({ allTxns, categories, activeCycle, t, shortCurrency, lang }: Props) {
+  const [trendData, setTrendData] = useState<Array<{ cycle: string, start_date: string, end_date: string, income: number, expense: number }>>([]);
   const [summary, setSummary] = useState({ income: 0, expense: 0, net: 0 });
 
   useEffect(() => {
@@ -45,6 +46,12 @@ export function ReportsPage({ allTxns, categories, activeCycle, t, shortCurrency
   const topCat = [...pieData].sort((a, b) => b.value - a.value)[0]?.name || "—";
   const avgExp = trendData.length > 0 ? Math.round(trendData.reduce((s, m) => s + m.expense, 0) / trendData.length) : 0;
 
+  const chartData = useMemo(() => trendData.map(d => ({
+    ...d,
+    label: fmtCycle({ start_date: d.start_date, end_date: d.end_date } as any, lang, true),
+    fullLabel: fmtCycle({ start_date: d.start_date, end_date: d.end_date } as any, lang)
+  })), [trendData, lang]);
+
   return (
     <div>
       <div className="stats-grid">
@@ -56,10 +63,10 @@ export function ReportsPage({ allTxns, categories, activeCycle, t, shortCurrency
       <div className="chart-card">
         <div className="chart-title">{t.monthlyOverview}</div>
         <ResponsiveContainer width="100%" height={175}>
-          <BarChart data={trendData} barGap={3} margin={{ left: -16 }}>
-            <XAxis dataKey="cycle" tick={{ fill: "var(--ink3)", fontSize: 11 }} axisLine={false} tickLine={false} />
+          <BarChart data={chartData} barGap={3} margin={{ left: -16 }}>
+            <XAxis dataKey="label" tick={{ fill: "var(--ink3)", fontSize: 11 }} axisLine={false} tickLine={false} />
             <YAxis tickFormatter={(v: number) => `${(v / 1e6).toFixed(0)}jt`} tick={{ fill: "var(--ink3)", fontSize: 10 }} axisLine={false} tickLine={false} />
-            <Tooltip formatter={(v) => fmt(Number(v))} contentStyle={{ background: "var(--paper)", border: "1px solid var(--stone1)", borderRadius: 10, fontSize: 12, color: "var(--ink)" }} />
+            <Tooltip labelFormatter={(_, payload) => payload[0]?.payload?.fullLabel} formatter={(v) => fmt(Number(v))} contentStyle={{ background: "var(--paper)", border: "1px solid var(--stone1)", borderRadius: 10, fontSize: 12, color: "var(--ink)" }} />
             <Bar dataKey="income" fill="var(--income)" radius={[4, 4, 0, 0]} name={t.income} />
             <Bar dataKey="expense" fill="var(--expense)" radius={[4, 4, 0, 0]} name={t.expense} />
           </BarChart>

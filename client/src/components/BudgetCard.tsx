@@ -1,8 +1,8 @@
 import { Category, Budget, Transaction, BudgetCycle } from '../types';
 import { Ico } from './icons';
 import { fmtShort } from '../utils/currency';
-import { txnsInCycle } from '../utils/dates';
-import { Strings } from '../utils/i18n';
+import { txnsInCycle, fmtCycle } from '../utils/dates';
+import { Strings, Language } from '../utils/i18n';
 import { ResponsiveContainer, LineChart, Line, XAxis, Tooltip } from 'recharts';
 
 interface Props {
@@ -13,6 +13,7 @@ interface Props {
   budgets: Budget[];
   allCycles: BudgetCycle[];
   t: Strings;
+  lang: Language;
   shortCurrency: boolean;
   canCreateBudget: boolean;
   onCreateBudget: (category: Category) => void;
@@ -20,7 +21,7 @@ interface Props {
   onEditBudget: (budget: Budget, catName: string) => void;
 }
 
-export function BudgetCard({ parentCategory, subCategories, allTxns, currentTxns, budgets, allCycles, t, shortCurrency, canCreateBudget, onCreateBudget, onToggleActive, onEditBudget }: Props) {
+export function BudgetCard({ parentCategory, subCategories, allTxns, currentTxns, budgets, allCycles, t, lang, shortCurrency, canCreateBudget, onCreateBudget, onToggleActive, onEditBudget }: Props) {
   function spentFor(catId: number, txnSet: Transaction[]): number {
     const subs = subCategories.filter(c => c.parent_id === catId);
     if (subs.length) return subs.reduce((s, c) => s + spentFor(c.id, txnSet), 0);
@@ -41,7 +42,11 @@ export function BudgetCard({ parentCategory, subCategories, allTxns, currentTxns
     const total = subCategories.length
       ? subCategories.reduce((s, c) => s + spentFor(c.id, cycTxns), 0)
       : spentFor(parentCategory.id, cycTxns);
-    return { cycle: cyc.label.split(" ")[0], val: total };
+    return { 
+      cycle: fmtCycle(cyc, lang, true), 
+      fullLabel: fmtCycle(cyc, lang),
+      val: total 
+    };
   });
 
   function BudgetBar({ spent, budget }: { spent: number, budget?: Budget }) {
@@ -107,7 +112,7 @@ export function BudgetCard({ parentCategory, subCategories, allTxns, currentTxns
           <LineChart data={spark} margin={{ left: 0, right: 0, top: 2, bottom: 0 }}>
             <XAxis dataKey="cycle" tick={{ fill: "var(--ink3)", fontSize: 9 }} axisLine={false} tickLine={false} />
             <Line type="monotone" dataKey="val" stroke={parentCategory.color || "var(--terra)"} strokeWidth={2} />
-            <Tooltip formatter={(v) => fmtShort(Number(v), shortCurrency)} contentStyle={{ background: "var(--paper)", border: "1px solid var(--stone1)", borderRadius: 8, fontSize: 11 }} cursor={{ fill: "var(--stone1)" }} />
+            <Tooltip labelFormatter={(_, payload) => payload[0]?.payload?.fullLabel} formatter={(v) => fmtShort(Number(v), shortCurrency)} contentStyle={{ background: "var(--paper)", border: "1px solid var(--stone1)", borderRadius: 8, fontSize: 11 }} cursor={{ fill: "var(--stone1)" }} />
           </LineChart>
         </ResponsiveContainer>
       </div>

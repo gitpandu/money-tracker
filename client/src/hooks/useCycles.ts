@@ -1,8 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import { api } from '../utils/api';
 import { BudgetCycle } from '../types';
+import { Language } from '../utils/i18n';
+import { fmtCycle } from '../utils/dates';
 
-export function useCycles(cycleDay: number = 25) {
+export function useCycles(cycleDay: number = 25, lang: Language = 'en') {
   const [cycles, setCycles] = useState<BudgetCycle[]>([]);
   const [activeCycleId, setActiveCycleId] = useState<string>('');
 
@@ -34,7 +36,10 @@ export function useCycles(cycleDay: number = 25) {
       const latestCycle = data[0];
 
       if (!latestCycle || todayFmt > latestCycle.end_date) {
-        const label = expectedEnd.toLocaleString('default', { month: 'long', year: 'numeric' });
+        const label = fmtCycle({ 
+          start_date: fmt(expectedStart), 
+          end_date: fmt(expectedEnd) 
+        } as any, lang);
 
         const newCycle = await api.createCycle({
           label,
@@ -52,7 +57,7 @@ export function useCycles(cycleDay: number = 25) {
     } catch (err) {
       console.error(err);
     }
-  }, [cycleDay]);
+  }, [cycleDay, lang]);
 
   useEffect(() => {
     loadCycles();

@@ -1,6 +1,7 @@
 import { Ico } from './icons';
 import { BudgetCycle } from '../types';
-import { Strings } from '../utils/i18n';
+import { Strings, Language } from '../utils/i18n';
+import { fmtCycle } from '../utils/dates';
 
 interface Props {
   tabs: string[];
@@ -10,9 +11,10 @@ interface Props {
   onTabChange: (tab: string) => void;
   activeCycle?: BudgetCycle;
   t: Strings;
+  lang: Language;
 }
 
-export function Sidebar({ tabs, tabIcons, tabLabels, activeTab, onTabChange, activeCycle, t }: Props) {
+export function Sidebar({ tabs, tabIcons, tabLabels, activeTab, onTabChange, activeCycle, t, lang }: Props) {
   return (
     <nav className="sidebar">
       <div className="sidebar-brand">Money <span>Tracker</span></div>
@@ -22,7 +24,7 @@ export function Sidebar({ tabs, tabIcons, tabLabels, activeTab, onTabChange, act
         </button>
       ))}
       <div className="sidebar-cycle">
-        {activeCycle?.label}<br />
+        {fmtCycle(activeCycle, lang)}<br />
         <span style={{ color: "var(--sage)" }}>● {t.cycleActive}</span>
       </div>
     </nav>

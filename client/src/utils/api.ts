@@ -146,7 +146,7 @@ export const api = {
   async getReportSummary(cycleId: string): Promise<{ income: number, expense: number, net: number }> {
     return request<{ income: number, expense: number, net: number }>(`/reports/summary?cycleId=${cycleId}`);
   },
-  async getReportTrend(): Promise<Array<{ cycle: string, income: number, expense: number }>> {
-    return request<Array<{ cycle: string, income: number, expense: number }>>('/reports/trend');
+  async getReportTrend(): Promise<Array<{ cycle: string, start_date: string, end_date: string, income: number, expense: number }>> {
+    return request<Array<{ cycle: string, start_date: string, end_date: string, income: number, expense: number }>>('/reports/trend');
   }
 };
