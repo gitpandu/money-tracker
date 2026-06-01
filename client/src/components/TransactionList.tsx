@@ -10,11 +10,12 @@ interface Props {
   txns: Transaction[];
   categories: Category[];
   t: Strings;
+  shortCurrency: boolean;
   onSave: (tx: any, receipt?: ReceiptData | null, removeReceipt?: boolean) => void;
   onDelete: (id: number) => void;
 }
 
-export function TransactionList({ txns, categories, t, onSave, onDelete }: Props) {
+export function TransactionList({ txns, categories, t, shortCurrency, onSave, onDelete }: Props) {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState("all");
   const [expanded, setExpanded] = useState<number | null>(null);
@@ -89,7 +90,7 @@ export function TransactionList({ txns, categories, t, onSave, onDelete }: Props
                   </div>
                 </div>
                 <div className={`txn-amt ${x.type === "income" ? "inc" : "exp"}`}>
-                  {x.type === "income" ? "+" : "−"}{fmtShort(x.amount)}
+                  {x.type === "income" ? "+" : "−"}{fmtShort(x.amount, shortCurrency)}
                 </div>
               </div>
               {open && (

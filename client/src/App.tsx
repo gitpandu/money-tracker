@@ -38,6 +38,7 @@ function AppContent() {
   const {
     lang, setLang,
     darkMode, setDarkMode,
+    shortCurrency, setShortCurrency,
     cycleDay, setCycleDay,
     carryOver, setCarryOver,
     copyBudgets, setCopyBudgets
@@ -106,6 +107,7 @@ function AppContent() {
               txns={currentTxns}
               categories={categories}
               t={t}
+              shortCurrency={shortCurrency}
               onSaveTxn={async (tx, receipt, removeReceipt) => {
                 if (tx.id) await updateTxn(tx.id, tx, receipt, removeReceipt);
                 else await createTxn(tx, receipt);
@@ -123,6 +125,7 @@ function AppContent() {
               allCycles={cycles}
               activeCycleId={activeCycleId}
               t={t}
+              shortCurrency={shortCurrency}
               onSaveBudget={saveBudget}
               onToggleActive={toggleBudgetActive}
             />
@@ -132,6 +135,7 @@ function AppContent() {
             <GoalsPage
               goals={goals}
               t={t}
+              shortCurrency={shortCurrency}
               onSaveGoal={saveGoal}
               onDeleteGoal={removeGoal}
               onContribute={contributeGoal}
@@ -144,6 +148,7 @@ function AppContent() {
               categories={categories}
               activeCycle={activeCycle}
               t={t}
+              shortCurrency={shortCurrency}
             />
           )}
 
@@ -157,6 +162,8 @@ function AppContent() {
               setLang={setLang}
               darkMode={darkMode}
               setDarkMode={setDarkMode}
+              shortCurrency={shortCurrency}
+              setShortCurrency={setShortCurrency}
               cycleDay={cycleDay}
               setCycleDay={setCycleDay}
               carryOver={carryOver}

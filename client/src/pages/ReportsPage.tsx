@@ -13,9 +13,10 @@ interface Props {
   categories: Category[];
   activeCycle?: BudgetCycle;
   t: Strings;
+  shortCurrency: boolean;
 }
 
-export function ReportsPage({ allTxns, categories, activeCycle, t }: Props) {
+export function ReportsPage({ allTxns, categories, activeCycle, t, shortCurrency }: Props) {
   const [trendData, setTrendData] = useState<Array<{ cycle: string, income: number, expense: number }>>([]);
   const [summary, setSummary] = useState({ income: 0, expense: 0, net: 0 });
 
@@ -49,7 +50,7 @@ export function ReportsPage({ allTxns, categories, activeCycle, t }: Props) {
       <div className="stats-grid">
         <div className="stat-box"><div className="stat-val" style={{ color: "var(--income)" }}>{savings}%</div><div className="stat-lbl">{t.savings}</div></div>
         <div className="stat-box"><div className="stat-val" style={{ fontSize: 12, lineHeight: 1.3 }}>{topCat}</div><div className="stat-lbl">{t.topSpend}</div></div>
-        <div className="stat-box"><div className="stat-val">{fmtShort(avgExp)}</div><div className="stat-lbl">{t.avgCycle}</div></div>
+        <div className="stat-box"><div className="stat-val">{fmtShort(avgExp, shortCurrency)}</div><div className="stat-lbl">{t.avgCycle}</div></div>
       </div>
 
       <div className="chart-card">

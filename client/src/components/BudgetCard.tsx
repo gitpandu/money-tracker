@@ -13,13 +13,14 @@ interface Props {
   budgets: Budget[];
   allCycles: BudgetCycle[];
   t: Strings;
+  shortCurrency: boolean;
   canCreateBudget: boolean;
   onCreateBudget: (category: Category) => void;
   onToggleActive: (id: number) => void;
   onEditBudget: (budget: Budget, catName: string) => void;
 }
 
-export function BudgetCard({ parentCategory, subCategories, allTxns, currentTxns, budgets, allCycles, t, canCreateBudget, onCreateBudget, onToggleActive, onEditBudget }: Props) {
+export function BudgetCard({ parentCategory, subCategories, allTxns, currentTxns, budgets, allCycles, t, shortCurrency, canCreateBudget, onCreateBudget, onToggleActive, onEditBudget }: Props) {
   function spentFor(catId: number, txnSet: Transaction[]): number {
     const subs = subCategories.filter(c => c.parent_id === catId);
     if (subs.length) return subs.reduce((s, c) => s + spentFor(c.id, txnSet), 0);
@@ -54,8 +55,8 @@ export function BudgetCard({ parentCategory, subCategories, allTxns, currentTxns
         <div className="track"><div className="track-fill" style={{ width: `${pct}%`, background: fill }} /></div>
         <div className="track-status" style={{ color: over ? "var(--expense)" : warn ? "var(--warn)" : "var(--ink3)" }}>
           {over
-            ? <><span className="over-badge">{t.over}</span>{fmtShort(spent - lim)} {t.overLimit}</>
-            : `${fmtShort(spent)} ${t.of} ${fmtShort(lim)} — ${pct.toFixed(0)}%`}
+            ? <><span className="over-badge">{t.over}</span>{fmtShort(spent - lim, shortCurrency)} {t.overLimit}</>
+            : `${fmtShort(spent, shortCurrency)} ${t.of} ${fmtShort(lim, shortCurrency)} — ${pct.toFixed(0)}%`}
         </div>
         {budget.note ? <div className="bsub-note">{budget.note}</div> : null}
       </>
@@ -69,7 +70,7 @@ export function BudgetCard({ parentCategory, subCategories, allTxns, currentTxns
       <div className="bblock-head">
         <span className="bblock-head-icon">{parentCategory.icon || "•"}</span>
         <span className="bblock-head-name">{parentCategory.name}</span>
-        <span className="bblock-head-total">{fmtShort(totalSpent)}{totalLimit > 0 ? ` / ${fmtShort(totalLimit)}` : ""}</span>
+        <span className="bblock-head-total">{fmtShort(totalSpent, shortCurrency)}{totalLimit > 0 ? ` / ${fmtShort(totalLimit, shortCurrency)}` : ""}</span>
       </div>
 
       {items.map(item => {
@@ -106,7 +107,7 @@ export function BudgetCard({ parentCategory, subCategories, allTxns, currentTxns
           <LineChart data={spark} margin={{ left: 0, right: 0, top: 2, bottom: 0 }}>
             <XAxis dataKey="cycle" tick={{ fill: "var(--ink3)", fontSize: 9 }} axisLine={false} tickLine={false} />
             <Line type="monotone" dataKey="val" stroke={parentCategory.color || "var(--terra)"} strokeWidth={2} />
-            <Tooltip formatter={(v) => fmtShort(Number(v))} contentStyle={{ background: "var(--paper)", border: "1px solid var(--stone1)", borderRadius: 8, fontSize: 11 }} cursor={{ fill: "var(--stone1)" }} />
+            <Tooltip formatter={(v) => fmtShort(Number(v), shortCurrency)} contentStyle={{ background: "var(--paper)", border: "1px solid var(--stone1)", borderRadius: 8, fontSize: 11 }} cursor={{ fill: "var(--stone1)" }} />
           </LineChart>
         </ResponsiveContainer>
       </div>

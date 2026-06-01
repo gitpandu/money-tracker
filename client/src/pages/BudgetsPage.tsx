@@ -13,13 +13,17 @@ interface Props {
   allCycles: BudgetCycle[];
   activeCycleId: string;
   t: Strings;
+  shortCurrency: boolean;
   onSaveBudget: (budget: Partial<Budget>) => void;
   onToggleActive: (id: number) => void;
 }
 
 type BudgetDraft = Partial<Budget> & Pick<Budget, 'cycle_id' | 'category_id'>;
 
-export function BudgetsPage({ currentTxns, allTxns, categories, budgets, allCycles, activeCycleId, t, onSaveBudget, onToggleActive }: Props) {
+export function BudgetsPage({
+  currentTxns, allTxns, categories, budgets, allCycles, activeCycleId,
+  t, shortCurrency, onSaveBudget, onToggleActive
+}: Props) {
   const [editBudget, setEditBudget] = useState<{ budget: BudgetDraft; catName: string } | null>(null);
 
   const parents = categories.filter(c => !c.parent_id && c.type === "expense");
@@ -39,9 +43,9 @@ export function BudgetsPage({ currentTxns, allTxns, categories, budgets, allCycl
   return (
     <div>
       <div className="budget-total-card">
-        <div className="bt-cell"><div className="bt-label">{t.budgeted}</div><div className="bt-val">{fmtShort(grandLimit)}</div></div>
-        <div className="bt-cell"><div className="bt-label">{t.spent}</div><div className="bt-val" style={{ color: "var(--expense)" }}>{fmtShort(grandSpent)}</div></div>
-        <div className="bt-cell"><div className="bt-label">{t.remaining}</div><div className="bt-val" style={{ color: grandLeft > 0 ? "var(--income)" : "var(--expense)" }}>{fmtShort(grandLeft)}</div></div>
+        <div className="bt-cell"><div className="bt-label">{t.budgeted}</div><div className="bt-val">{fmtShort(grandLimit, shortCurrency)}</div></div>
+        <div className="bt-cell"><div className="bt-label">{t.spent}</div><div className="bt-val" style={{ color: "var(--expense)" }}>{fmtShort(grandSpent, shortCurrency)}</div></div>
+        <div className="bt-cell"><div className="bt-label">{t.remaining}</div><div className="bt-val" style={{ color: grandLeft > 0 ? "var(--income)" : "var(--expense)" }}>{fmtShort(grandLeft, shortCurrency)}</div></div>
       </div>
 
       {parents.map(p => (
@@ -54,6 +58,7 @@ export function BudgetsPage({ currentTxns, allTxns, categories, budgets, allCycl
           budgets={budgets}
           allCycles={allCycles}
           t={t}
+          shortCurrency={shortCurrency}
           canCreateBudget={canCreateBudget}
           onCreateBudget={(category) => {
             if (!canCreateBudget) return;
@@ -74,12 +79,12 @@ export function BudgetsPage({ currentTxns, allTxns, categories, budgets, allCycl
       ))}
 
       {editBudget && (
-        <BudgetModal 
-          budget={editBudget.budget} 
-          catName={editBudget.catName} 
+        <BudgetModal
+          budget={editBudget.budget}
+          catName={editBudget.catName}
           t={t}
-          onClose={() => setEditBudget(null)} 
-          onSave={b => { onSaveBudget(b); setEditBudget(null); }} 
+          onClose={() => setEditBudget(null)}
+          onSave={b => { onSaveBudget(b); setEditBudget(null); }}
         />
       )}
     </div>

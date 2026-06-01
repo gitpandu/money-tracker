@@ -7,12 +7,13 @@ import { Strings } from '../utils/i18n';
 interface Props {
   goal: Goal;
   t: Strings;
+  shortCurrency: boolean;
   onEdit: (goal: Goal) => void;
   onDelete: (id: number) => void;
   onContribute: (id: number, amount: number) => void;
 }
 
-export function GoalCard({ goal: g, t, onEdit, onDelete, onContribute }: Props) {
+export function GoalCard({ goal: g, t, shortCurrency, onEdit, onDelete, onContribute }: Props) {
   const [contribAmount, setContribAmount] = useState("");
 
   const pct = Math.min((g.saved / g.target) * 100, 100);
@@ -37,14 +38,14 @@ export function GoalCard({ goal: g, t, onEdit, onDelete, onContribute }: Props) 
       </div>
 
       <div className="goal-amounts">
-        <span className="goal-saved">{fmtShort(g.saved)}</span>
-        <span className="goal-target">{t.of} {fmtShort(g.target)}</span>
+        <span className="goal-saved">{fmtShort(g.saved, shortCurrency)}</span>
+        <span className="goal-target">{t.of} {fmtShort(g.target, shortCurrency)}</span>
       </div>
       <div className="track">
         <div className="track-fill" style={{ width: `${pct}%`, background: done ? "var(--income)" : g.color }} />
       </div>
       <div className="track-status" style={{ color: done ? "var(--income)" : "var(--ink3)" }}>
-        {done ? "✓ Goal reached!" : `${pct.toFixed(0)}% — ${fmtShort(g.target - g.saved)} ${t.remaining}`}
+        {done ? "✓ Goal reached!" : `${pct.toFixed(0)}% — ${fmtShort(g.target - g.saved, shortCurrency)} ${t.remaining}`}
       </div>
       {g.deadline && <div className="goal-deadline">🗓 {g.deadline}</div>}
 

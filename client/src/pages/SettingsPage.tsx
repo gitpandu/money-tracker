@@ -16,6 +16,8 @@ interface Props {
   setLang: (lang: Language) => void;
   darkMode: boolean;
   setDarkMode: (dark: boolean) => void;
+  shortCurrency: boolean;
+  setShortCurrency: (short: boolean) => void;
   cycleDay: number;
   setCycleDay: (day: number) => void;
   carryOver: boolean;
@@ -30,6 +32,7 @@ interface Props {
 export function SettingsPage({ 
   categories, cycles, activeCycleId, allTxns, 
   lang, setLang, darkMode, setDarkMode, 
+  shortCurrency, setShortCurrency,
   cycleDay, setCycleDay, carryOver, setCarryOver, copyBudgets, setCopyBudgets,
   t, onSaveCategory, onDeleteCategory 
 }: Props) {
@@ -112,6 +115,10 @@ export function SettingsPage({
         <div className="setting-row">
           <div><div className="setting-lbl">{t.darkMode}</div><div className="setting-desc">{t.darkModeDesc}</div></div>
           <label className="toggle-wrap"><input type="checkbox" checked={darkMode} onChange={e => setDarkMode(e.target.checked)} /><span className="toggle-slider" /></label>
+        </div>
+        <div className="setting-row">
+          <div><div className="setting-lbl">{t.shortCurrency}</div><div className="setting-desc">{t.shortCurrencyDesc}</div></div>
+          <label className="toggle-wrap"><input type="checkbox" checked={shortCurrency} onChange={e => setShortCurrency(e.target.checked)} /><span className="toggle-slider" /></label>
         </div>
         <div className="setting-row">
           <div><div className="setting-lbl">{t.language}</div></div>

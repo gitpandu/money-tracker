@@ -8,12 +8,13 @@ import { ConfirmModal } from '../components/ConfirmModal';
 interface Props {
   goals: Goal[];
   t: Strings;
+  shortCurrency: boolean;
   onSaveGoal: (goal: Partial<Goal>) => void;
   onDeleteGoal: (id: number) => void;
   onContribute: (id: number, amount: number) => void;
 }
 
-export function GoalsPage({ goals, t, onSaveGoal, onDeleteGoal, onContribute }: Props) {
+export function GoalsPage({ goals, t, shortCurrency, onSaveGoal, onDeleteGoal, onContribute }: Props) {
   const [modal, setModal] = useState<{ mode: 'add' | 'edit', goal?: Goal } | null>(null);
   const [confirm, setConfirm] = useState<Goal | null>(null);
 
@@ -31,6 +32,7 @@ export function GoalsPage({ goals, t, onSaveGoal, onDeleteGoal, onContribute }: 
           key={g.id}
           goal={g}
           t={t}
+          shortCurrency={shortCurrency}
           onEdit={(goal) => setModal({ mode: 'edit', goal })}
           onDelete={() => setConfirm(g)}
           onContribute={onContribute}

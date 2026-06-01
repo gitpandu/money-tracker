@@ -28,6 +28,11 @@ export function useSettings() {
     return saved !== null ? saved === "true" : true;
   });
 
+  const [shortCurrency, setShortCurrency] = useState<boolean>(() => {
+    const saved = localStorage.getItem("mt_shortCurrency");
+    return saved !== null ? saved === "true" : true;
+  });
+
   useEffect(() => {
     localStorage.setItem("mt_lang", lang);
   }, [lang]);
@@ -49,11 +54,16 @@ export function useSettings() {
     localStorage.setItem("mt_copyBudgets", copyBudgets.toString());
   }, [copyBudgets]);
 
+  useEffect(() => {
+    localStorage.setItem("mt_shortCurrency", shortCurrency.toString());
+  }, [shortCurrency]);
+
   return { 
     lang, setLang, 
     darkMode, setDarkMode,
     cycleDay, setCycleDay,
     carryOver, setCarryOver,
-    copyBudgets, setCopyBudgets
+    copyBudgets, setCopyBudgets,
+    shortCurrency, setShortCurrency
   };
 }
