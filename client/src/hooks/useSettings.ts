@@ -18,16 +18,6 @@ export function useSettings() {
     return saved ? parseInt(saved, 10) : 25;
   });
 
-  const [carryOver, setCarryOver] = useState<boolean>(() => {
-    const saved = localStorage.getItem("mt_carryOver");
-    return saved !== null ? saved === "true" : true;
-  });
-
-  const [copyBudgets, setCopyBudgets] = useState<boolean>(() => {
-    const saved = localStorage.getItem("mt_copyBudgets");
-    return saved !== null ? saved === "true" : true;
-  });
-
   const [shortCurrency, setShortCurrency] = useState<boolean>(() => {
     const saved = localStorage.getItem("mt_shortCurrency");
     return saved !== null ? saved === "true" : false;
@@ -47,14 +37,6 @@ export function useSettings() {
   }, [cycleDay]);
 
   useEffect(() => {
-    localStorage.setItem("mt_carryOver", carryOver.toString());
-  }, [carryOver]);
-
-  useEffect(() => {
-    localStorage.setItem("mt_copyBudgets", copyBudgets.toString());
-  }, [copyBudgets]);
-
-  useEffect(() => {
     localStorage.setItem("mt_shortCurrency", shortCurrency.toString());
   }, [shortCurrency]);
 
@@ -62,8 +44,6 @@ export function useSettings() {
     lang, setLang, 
     darkMode, setDarkMode,
     cycleDay, setCycleDay,
-    carryOver, setCarryOver,
-    copyBudgets, setCopyBudgets,
     shortCurrency, setShortCurrency
   };
 }

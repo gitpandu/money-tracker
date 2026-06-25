@@ -20,10 +20,6 @@ interface Props {
   setShortCurrency: (short: boolean) => void;
   cycleDay: number;
   setCycleDay: (day: number) => void;
-  carryOver: boolean;
-  setCarryOver: (co: boolean) => void;
-  copyBudgets: boolean;
-  setCopyBudgets: (cb: boolean) => void;
   t: Strings;
   onSaveCategory: (cat: Partial<Category>) => void;
   onDeleteCategory: (id: number) => void;
@@ -33,7 +29,7 @@ export function SettingsPage({
   categories, cycles, activeCycleId, allTxns, 
   lang, setLang, darkMode, setDarkMode, 
   shortCurrency, setShortCurrency,
-  cycleDay, setCycleDay, carryOver, setCarryOver, copyBudgets, setCopyBudgets,
+  cycleDay, setCycleDay,
   t, onSaveCategory, onDeleteCategory 
 }: Props) {
   const [exportCycleId, setExportCycleId] = useState(activeCycleId);
@@ -103,14 +99,6 @@ export function SettingsPage({
           <input className="field-input" type="number" min={1} max={28} value={cycleDay}
             onChange={e => setCycleDay(Number(e.target.value))}
             style={{ width: 58, textAlign: "center", fontFamily: "var(--display)", fontSize: 16, padding: "6px" }} />
-        </div>
-        <div className="setting-row">
-          <div><div className="setting-lbl">{t.carryOver}</div><div className="setting-desc">{t.carryOverDesc}</div></div>
-          <label className="toggle-wrap"><input type="checkbox" checked={carryOver} onChange={e => setCarryOver(e.target.checked)} /><span className="toggle-slider" /></label>
-        </div>
-        <div className="setting-row">
-          <div><div className="setting-lbl">{t.copyBudgets}</div><div className="setting-desc">{t.copyBudgetsDesc}</div></div>
-          <label className="toggle-wrap"><input type="checkbox" checked={copyBudgets} onChange={e => setCopyBudgets(e.target.checked)} /><span className="toggle-slider" /></label>
         </div>
         <div className="setting-row">
           <div><div className="setting-lbl">{t.darkMode}</div><div className="setting-desc">{t.darkModeDesc}</div></div>

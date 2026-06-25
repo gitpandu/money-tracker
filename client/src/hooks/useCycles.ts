@@ -4,7 +4,10 @@ import { BudgetCycle } from '../types';
 import { Language } from '../utils/i18n';
 import { fmtCycle } from '../utils/dates';
 
-export function useCycles(cycleDay: number = 25, lang: Language = 'en') {
+export function useCycles(
+  cycleDay: number = 25,
+  lang: Language = 'en'
+) {
   const [cycles, setCycles] = useState<BudgetCycle[]>([]);
   const [activeCycleId, setActiveCycleId] = useState<string>('');
 

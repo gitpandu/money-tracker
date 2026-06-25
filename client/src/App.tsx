@@ -39,9 +39,7 @@ function AppContent() {
     lang, setLang,
     darkMode, setDarkMode,
     shortCurrency, setShortCurrency,
-    cycleDay, setCycleDay,
-    carryOver, setCarryOver,
-    copyBudgets, setCopyBudgets
+    cycleDay, setCycleDay
   } = useSettings();
 
   const { loading, error, startLoading, stopLoading, setError } = useAppContext();
@@ -170,10 +168,6 @@ function AppContent() {
               setShortCurrency={setShortCurrency}
               cycleDay={cycleDay}
               setCycleDay={setCycleDay}
-              carryOver={carryOver}
-              setCarryOver={setCarryOver}
-              copyBudgets={copyBudgets}
-              setCopyBudgets={setCopyBudgets}
               t={t}
               onSaveCategory={saveCategory}
               onDeleteCategory={removeCategory}
