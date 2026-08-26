@@ -36,7 +36,7 @@ app.use('/api/budgets', budgetsRouter);
 app.use('/api/reports', reportsRouter);
 
 // Serve frontend in production
-const publicDir = join(process.cwd(), 'server', 'public');
+const publicDir = join(process.cwd(), 'dist', 'public');
 if (existsSync(publicDir)) {
   app.use(express.static(publicDir));
   app.get(/.*/, (_req, res) => {

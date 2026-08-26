@@ -9,7 +9,6 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "server:dev": "tsx watch server/index.ts",
-    "server:build": "tsc -p server/tsconfig.json",
     "start": "node dist/server/index.js"
   },
   "dependencies": {
