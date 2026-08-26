@@ -1,4 +1,4 @@
-version: '3.8'
+name: money-tracker
 
 services:
   money-tracker:
@@ -8,10 +8,25 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - data:/app/data
+      - ./data:/app/data
     environment:
       - PORT=3000
       - NODE_ENV=production
 
-volumes:
-  data:
+x-casaos:
+  main: money-tracker
+  index: /
+  port_map: "3000"
+  title:
+    en_US: Money Tracker
+  tagline:
+    en_US: Lightweight personal finance tracker
+  description:
+    en_US: A lightweight personal finance tracker for managing personal finances.
+  icon: ""
+  author: you
+  developer: you
+  category: Finance
+  architectures:
+    - amd64
+    - arm64
