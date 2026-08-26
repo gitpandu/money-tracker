@@ -8,8 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "server:dev": "tsx watch server/index.ts",
-    "start": "node dist/server/index.js"
+    "server:dev": "tsx watch app/backend/index.ts",
+    "start": "node dist/backend/index.js"
   },
   "dependencies": {
     "cors": "^2.8.6",
