@@ -1,4 +1,4 @@
-import { Category, Transaction, Budget, BudgetCycle, Goal, ReceiptData } from '../types';
+import { Category, Transaction, Budget, BudgetCycle, Goal, GoalContribution, ReceiptData } from '../types';
 
 const API = '/api';
 
@@ -140,6 +140,19 @@ export const api = {
   },
   async deleteGoal(id: number): Promise<void> {
     await request<void>(`/goals/${id}`, { method: 'DELETE' });
+  },
+  async getGoalContributions(goalId: number): Promise<GoalContribution[]> {
+    return request<GoalContribution[]>(`/goals/${goalId}/contributions`);
+  },
+  async createGoalContribution(goalId: number, data: { amount: number; note?: string; date?: string }): Promise<{ contribution: GoalContribution; goal: Goal }> {
+    return request<{ contribution: GoalContribution; goal: Goal }>(`/goals/${goalId}/contributions`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+  },
+  async deleteGoalContribution(goalId: number, contribId: number): Promise<{ goal: Goal }> {
+    return request<{ goal: Goal }>(`/goals/${goalId}/contributions/${contribId}`, { method: 'DELETE' });
   },
 
   // Reports

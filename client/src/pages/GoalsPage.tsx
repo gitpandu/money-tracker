@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Goal } from '../types';
+import { Goal, GoalContribution } from '../types';
 import { Strings } from '../utils/i18n';
 import { GoalCard } from '../components/GoalCard';
 import { GoalModal } from '../components/GoalModal';
@@ -11,18 +11,20 @@ interface Props {
   shortCurrency: boolean;
   onSaveGoal: (goal: Partial<Goal>) => void;
   onDeleteGoal: (id: number) => void;
-  onContribute: (id: number, amount: number) => void;
+  onAddContribution: (goalId: number, amount: number, note?: string, date?: string) => Promise<unknown>;
+  onDeleteContribution: (goalId: number, contribId: number) => Promise<void>;
+  onGetContributions: (goalId: number) => Promise<GoalContribution[]>;
 }
 
-export function GoalsPage({ goals, t, shortCurrency, onSaveGoal, onDeleteGoal, onContribute }: Props) {
+export function GoalsPage({ goals, t, shortCurrency, onSaveGoal, onDeleteGoal, onAddContribution, onDeleteContribution, onGetContributions }: Props) {
   const [modal, setModal] = useState<{ mode: 'add' | 'edit', goal?: Goal } | null>(null);
   const [confirm, setConfirm] = useState<Goal | null>(null);
 
   return (
     <div>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
         <span className="section-lbl" style={{ margin: 0 }}>{t.goalsTitle}</span>
-        <button className="add-btn" onClick={() => setModal({ mode: "add" })}>{t.addCat}</button>
+        <button className="add-btn" onClick={() => setModal({ mode: 'add' })}>{t.addCat}</button>
       </div>
 
       {goals.length === 0 && <div className="empty-state">{t.noGoals}</div>}
@@ -35,13 +37,15 @@ export function GoalsPage({ goals, t, shortCurrency, onSaveGoal, onDeleteGoal, o
           shortCurrency={shortCurrency}
           onEdit={(goal) => setModal({ mode: 'edit', goal })}
           onDelete={() => setConfirm(g)}
-          onContribute={onContribute}
+          onAddContribution={onAddContribution}
+          onDeleteContribution={onDeleteContribution}
+          onGetContributions={onGetContributions}
         />
       ))}
 
       {modal && (
         <GoalModal
-          initial={modal.mode === "edit" ? modal.goal || null : null}
+          initial={modal.mode === 'edit' ? modal.goal || null : null}
           t={t}
           onClose={() => setModal(null)}
           onSave={g => { onSaveGoal(g); setModal(null); }}
@@ -51,7 +55,7 @@ export function GoalsPage({ goals, t, shortCurrency, onSaveGoal, onDeleteGoal, o
       {confirm && (
         <ConfirmModal
           title={t.deleteConfirmTitle(confirm.name)}
-          body={""}
+          body={''}
           t={t}
           onClose={() => setConfirm(null)}
           onConfirm={() => { onDeleteGoal(confirm.id); setConfirm(null); }}

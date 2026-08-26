@@ -46,3 +46,12 @@ export interface Goal {
   color: string;
   created_at: string;
 }
+
+export interface GoalContribution {
+  id: number;
+  goal_id: number;
+  amount: number;
+  note: string;
+  date: string;
+  created_at: string;
+}

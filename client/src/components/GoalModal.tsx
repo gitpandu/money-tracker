@@ -34,7 +34,7 @@ export function GoalModal({ initial, t, onClose, onSave }: Props) {
       id: initial?.id, 
       name, 
       target: parseInt(target), 
-      saved: saved ? parseInt(saved) : 0, 
+      saved: initial ? undefined : (saved ? parseInt(saved) : 0),
       deadline: deadline || null, 
       icon, 
       color 
@@ -58,10 +58,12 @@ export function GoalModal({ initial, t, onClose, onSave }: Props) {
             <label className="field-label">{t.target}</label>
             <input className="field-input" type="number" value={target} onChange={e => setTarget(e.target.value)} />
           </div>
-          <div className="field">
-            <label className="field-label">{t.saved}</label>
-            <input className="field-input" type="number" value={saved} onChange={e => setSaved(e.target.value)} />
-          </div>
+          {!initial && (
+            <div className="field">
+              <label className="field-label">{t.saved}</label>
+              <input className="field-input" type="number" value={saved} onChange={e => setSaved(e.target.value)} />
+            </div>
+          )}
         </div>
 
         <div className="field">

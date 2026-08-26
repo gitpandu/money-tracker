@@ -28,13 +28,13 @@ import { GoalsPage } from './pages/GoalsPage';
 import { ReportsPage } from './pages/ReportsPage';
 import { SettingsPage } from './pages/SettingsPage';
 
-const TAB_IDS = ["dashboard", "budgets", "goals", "reports", "settings"];
+const TAB_IDS = ['dashboard', 'budgets', 'goals', 'reports', 'settings'];
 const TAB_ICONS: Record<string, keyof typeof Ico> = {
-  dashboard: "home", budgets: "budget", goals: "goal", reports: "chart", settings: "cog"
+  dashboard: 'home', budgets: 'budget', goals: 'goal', reports: 'chart', settings: 'cog'
 };
 
 function AppContent() {
-  const [tab, setTab] = useState("dashboard");
+  const [tab, setTab] = useState('dashboard');
   const {
     lang, setLang,
     darkMode, setDarkMode,
@@ -64,7 +64,7 @@ function AppContent() {
   const { categories, save: saveCategory, remove: removeCategory } = useCategories();
   const { transactions, create: createTxn, update: updateTxn, remove: removeTxn } = useTransactions();
   const { budgets, save: saveBudget, toggleActive: toggleBudgetActive } = useBudgets(activeCycleId);
-  const { goals, save: saveGoal, remove: removeGoal, contribute: contributeGoal } = useGoals();
+  const { goals, save: saveGoal, remove: removeGoal, addContribution, deleteContribution, getContributions } = useGoals();
 
   const activeCycle = cycles.find(c => c.id.toString() === activeCycleId);
   const currentTxns = txnsInCycle(transactions, activeCycle);
@@ -93,8 +93,8 @@ function AppContent() {
 
       <div className="main-col">
         <Topbar
-          title={tab === "dashboard" ? t.home : TAB_LBL[tab]}
-          showCycleSelector={tab === "dashboard"}
+          title={tab === 'dashboard' ? t.home : TAB_LBL[tab]}
+          showCycleSelector={tab === 'dashboard'}
           cycles={cycles}
           activeCycleId={activeCycleId}
           onCycleChange={setActiveCycleId}
@@ -102,7 +102,7 @@ function AppContent() {
         />
 
         <div className="scroll-area" onScroll={handleScroll}>
-          {tab === "dashboard" && (
+          {tab === 'dashboard' && (
             <DashboardPage
               txns={currentTxns}
               categories={categories}
@@ -116,7 +116,7 @@ function AppContent() {
             />
           )}
 
-          {tab === "budgets" && (
+          {tab === 'budgets' && (
             <BudgetsPage
               currentTxns={currentTxns}
               allTxns={transactions}
@@ -132,18 +132,20 @@ function AppContent() {
             />
           )}
 
-          {tab === "goals" && (
+          {tab === 'goals' && (
             <GoalsPage
               goals={goals}
               t={t}
               shortCurrency={shortCurrency}
               onSaveGoal={saveGoal}
               onDeleteGoal={removeGoal}
-              onContribute={contributeGoal}
+              onAddContribution={addContribution}
+              onDeleteContribution={deleteContribution}
+              onGetContributions={getContributions}
             />
           )}
 
-          {tab === "reports" && (
+          {tab === 'reports' && (
             <ReportsPage
               allTxns={transactions}
               categories={categories}
@@ -154,7 +156,7 @@ function AppContent() {
             />
           )}
 
-          {tab === "settings" && (
+          {tab === 'settings' && (
             <SettingsPage
               categories={categories}
               cycles={cycles}
@@ -176,7 +178,7 @@ function AppContent() {
         </div>
       </div>
 
-      {tab === "dashboard" && (
+      {tab === 'dashboard' && (
         <FAB show={showFab} onClick={() => setFabOpen(true)} />
       )}
 

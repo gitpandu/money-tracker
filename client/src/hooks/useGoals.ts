@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { api } from '../utils/api';
-import { Goal } from '../types';
+import { Goal, GoalContribution } from '../types';
 
 export function useGoals() {
   const [goals, setGoals] = useState<Goal[]>([]);
@@ -35,12 +35,20 @@ export function useGoals() {
     setGoals(prev => prev.filter(g => g.id !== id));
   }
 
-  async function contribute(id: number, amount: number) {
-    const goal = goals.find(g => g.id === id);
-    if (!goal) return;
-    const newSaved = Math.min(goal.saved + amount, goal.target);
-    return save({ ...goal, saved: newSaved });
+  async function addContribution(goalId: number, amount: number, note?: string, date?: string) {
+    const result = await api.createGoalContribution(goalId, { amount, note, date });
+    setGoals(prev => prev.map(g => g.id === goalId ? result.goal : g));
+    return result;
   }
 
-  return { goals, save, remove, contribute, refresh: loadGoals };
+  async function deleteContribution(goalId: number, contribId: number) {
+    const result = await api.deleteGoalContribution(goalId, contribId);
+    setGoals(prev => prev.map(g => g.id === goalId ? result.goal : g));
+  }
+
+  async function getContributions(goalId: number): Promise<GoalContribution[]> {
+    return api.getGoalContributions(goalId);
+  }
+
+  return { goals, save, remove, addContribution, deleteContribution, getContributions, refresh: loadGoals };
 }

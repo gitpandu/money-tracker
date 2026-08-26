@@ -570,14 +570,6 @@
   margin-top: 5px;
 }
 
-.goal-contrib-row {
-  margin-top: 10px;
-  padding-top: 10px;
-  border-top: 1px solid var(--stone1);
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
 
 .contrib-input {
   flex: 1;
@@ -603,6 +595,146 @@
   font-weight: 600;
   border: none;
   cursor: pointer;
+  white-space: nowrap;
+}
+
+.contrib-btn.withdraw {
+  background: var(--expense);
+}
+
+.goal-contrib-row {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--stone1);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.contrib-type-toggle {
+  display: flex;
+  gap: 6px;
+}
+
+.contrib-type-btn {
+  flex: 1;
+  padding: 6px 10px;
+  border-radius: var(--rs);
+  border: 1.5px solid var(--stone2);
+  background: var(--cream);
+  color: var(--ink3);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.contrib-type-btn.active.deposit {
+  border-color: var(--income);
+  background: var(--income);
+  color: #fff;
+}
+
+.contrib-type-btn.active.withdraw {
+  border-color: var(--expense);
+  background: var(--expense);
+  color: #fff;
+}
+
+.contrib-inputs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.contrib-note {
+  flex: 2;
+}
+
+.contrib-date {
+  flex: 0 0 130px;
+}
+
+.goal-history-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  padding: 0;
+  background: none;
+  border: none;
+  color: var(--ink3);
+  font-size: 12px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.goal-history-toggle:hover {
+  color: var(--ink);
+}
+
+.goal-history {
+  margin-top: 8px;
+  border-top: 1px solid var(--stone1);
+  padding-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.history-loading,
+.history-empty {
+  font-size: 12px;
+  color: var(--ink3);
+  text-align: center;
+  padding: 8px 0;
+}
+
+.history-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px;
+  border-radius: var(--rs);
+  background: var(--cream);
+  font-size: 12px;
+}
+
+.history-row.dep .history-amount { color: var(--income); }
+.history-row.wth .history-amount { color: var(--expense); }
+
+.history-date {
+  color: var(--ink3);
+  flex-shrink: 0;
+  width: 80px;
+}
+
+.history-note {
+  flex: 1;
+  color: var(--ink2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.history-amount {
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.history-del {
+  background: none;
+  border: none;
+  color: var(--ink3);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 2px;
+  flex-shrink: 0;
+}
+
+.history-del:hover {
+  color: var(--expense);
 }
 
 /* ── Settings ── */

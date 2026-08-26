@@ -29,8 +29,9 @@ export const STRINGS = {
     language: "Language", exportCSV: "Export CSV", exportDesc: "Download current cycle transactions",
     goalsTitle: "Savings Goals", newGoal: "New Goal", editGoal: "Edit Goal",
     target: "Target (Rp)", saved: "Saved so far (Rp)", deadline: "Deadline (optional)",
-    addContrib: "Add", contribAmount: "Amount to add (Rp)", contribute: "Contribute",
+    addContrib: "Add", contribAmount: "Amount (Rp)", contribute: "Contribute", contribNote: "Note (optional)",
     noGoals: "No savings goals yet", goalName: "Goal name", goalIcon: "Icon", goalColor: "Color",
+    history: "History", noHistory: "No contributions yet", deposit: "Deposit", withdraw: "Withdraw",
     selectCat: "Select…", of: "of",
   },
   id: {
@@ -63,8 +64,9 @@ export const STRINGS = {
     language: "Bahasa", exportCSV: "Ekspor CSV", exportDesc: "Unduh transaksi siklus ini",
     goalsTitle: "Target Tabungan", newGoal: "Target Baru", editGoal: "Ubah Target",
     target: "Target (Rp)", saved: "Sudah ditabung (Rp)", deadline: "Batas waktu (opsional)",
-    addContrib: "Tambah", contribAmount: "Jumlah yang ditambahkan (Rp)", contribute: "Tabung",
+    addContrib: "Tambah", contribAmount: "Jumlah (Rp)", contribute: "Tabung", contribNote: "Catatan (opsional)",
     noGoals: "Belum ada target tabungan", goalName: "Nama target", goalIcon: "Ikon", goalColor: "Warna",
+    history: "Riwayat", noHistory: "Belum ada transaksi", deposit: "Setor", withdraw: "Tarik",
     selectCat: "Pilih…", of: "dari",
   },
 };
