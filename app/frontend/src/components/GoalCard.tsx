@@ -3,6 +3,7 @@ import { Goal, GoalContribution } from '../types';
 import { Ico } from './icons';
 import { fmtShort } from '../utils/currency';
 import { Strings } from '../utils/i18n';
+import { GoalContributionModal } from './GoalContributionModal';
 
 interface Props {
   goal: Goal;
@@ -16,46 +17,20 @@ interface Props {
 }
 
 export function GoalCard({ goal: g, t, shortCurrency, onEdit, onDelete, onAddContribution, onDeleteContribution, onGetContributions }: Props) {
-  const [amount, setAmount] = useState('');
-  const [note, setNote] = useState('');
-  const [date, setDate] = useState('');
-  const [isWithdraw, setIsWithdraw] = useState(false);
-  const [showHistory, setShowHistory] = useState(false);
+  const [showContributions, setShowContributions] = useState(false);
   const [history, setHistory] = useState<GoalContribution[]>([]);
-  const [loadingHistory, setLoadingHistory] = useState(false);
 
   const pct = Math.min((g.saved / g.target) * 100, 100);
   const done = g.saved >= g.target;
 
-  async function handleContribute() {
-    const raw = parseInt(amount);
-    if (!raw || raw <= 0) return;
-    const signed = isWithdraw ? -raw : raw;
-    await onAddContribution(g.id, signed, note.trim() || undefined, date || undefined);
-    setAmount('');
-    setNote('');
-    setDate('');
-    if (showHistory) loadHistory();
-  }
-
   const loadHistory = useCallback(async () => {
-    setLoadingHistory(true);
-    try {
-      const data = await onGetContributions(g.id);
-      setHistory(data);
-    } finally {
-      setLoadingHistory(false);
-    }
+    const data = await onGetContributions(g.id);
+    setHistory(data);
   }, [g.id, onGetContributions]);
 
-  async function toggleHistory() {
-    if (!showHistory) await loadHistory();
-    setShowHistory(h => !h);
-  }
-
-  async function handleDeleteContrib(contribId: number) {
-    await onDeleteContribution(g.id, contribId);
-    setHistory(prev => prev.filter(c => c.id !== contribId));
+  async function openContributions() {
+    await loadHistory();
+    setShowContributions(true);
   }
 
   return (
@@ -77,69 +52,25 @@ export function GoalCard({ goal: g, t, shortCurrency, onEdit, onDelete, onAddCon
         <div className="track-fill" style={{ width: `${pct}%`, background: done ? 'var(--income)' : g.color }} />
       </div>
       <div className="track-status" style={{ color: done ? 'var(--income)' : 'var(--ink3)' }}>
-        {done ? '✓ Goal reached!' : `${pct.toFixed(0)}% — ${fmtShort(g.target - g.saved, shortCurrency)} ${t.remaining}`}
+        {done ? 'Goal reached!' : `${pct.toFixed(0)}% - ${fmtShort(g.target - g.saved, shortCurrency)} ${t.remaining}`}
       </div>
-      {g.deadline && <div className="goal-deadline">🗓 {g.deadline}</div>}
+      {g.deadline && <div className="goal-deadline">{g.deadline}</div>}
 
-      <div className="goal-contrib-row">
-        <div className="contrib-type-toggle">
-          <button
-            className={`contrib-type-btn ${!isWithdraw ? 'active deposit' : ''}`}
-            onClick={() => setIsWithdraw(false)}
-          >+ {t.deposit}</button>
-          <button
-            className={`contrib-type-btn ${isWithdraw ? 'active withdraw' : ''}`}
-            onClick={() => setIsWithdraw(true)}
-          >− {t.withdraw}</button>
-        </div>
-        <div className="contrib-inputs">
-          <input
-            className="contrib-input"
-            type="number"
-            placeholder={t.contribAmount}
-            value={amount}
-            min="1"
-            onChange={e => setAmount(e.target.value)}
-          />
-          <input
-            className="contrib-input contrib-note"
-            type="text"
-            placeholder={t.contribNote}
-            value={note}
-            onChange={e => setNote(e.target.value)}
-          />
-          <input
-            className="contrib-input contrib-date"
-            type="date"
-            value={date}
-            onChange={e => setDate(e.target.value)}
-          />
-        </div>
-        <button
-          className={`contrib-btn ${isWithdraw ? 'withdraw' : ''}`}
-          onClick={handleContribute}
-        >{t.contribute}</button>
-      </div>
-
-      <button className="goal-history-toggle" onClick={toggleHistory}>
-        {Ico.chart} {t.history} {showHistory ? '▲' : '▼'}
+      <button className="goal-history-toggle" onClick={openContributions}>
+        {Ico.chart} {t.addContrib} / {t.history}
       </button>
 
-      {showHistory && (
-        <div className="goal-history">
-          {loadingHistory && <div className="history-loading">…</div>}
-          {!loadingHistory && history.length === 0 && (
-            <div className="history-empty">{t.noHistory}</div>
-          )}
-          {history.map(c => (
-            <div key={c.id} className={`history-row ${c.amount >= 0 ? 'dep' : 'wth'}`}>
-              <span className="history-date">{c.date}</span>
-              <span className="history-note">{c.note || '—'}</span>
-              <span className="history-amount">{c.amount >= 0 ? '+' : ''}{fmtShort(c.amount, shortCurrency)}</span>
-              <button className="history-del" onClick={() => handleDeleteContrib(c.id)}>×</button>
-            </div>
-          ))}
-        </div>
+      {showContributions && (
+        <GoalContributionModal
+          goal={g}
+          t={t}
+          shortCurrency={shortCurrency}
+          initialHistory={history}
+          onClose={() => setShowContributions(false)}
+          onAddContribution={onAddContribution}
+          onDeleteContribution={onDeleteContribution}
+          onGetContributions={onGetContributions}
+        />
       )}
     </div>
   );
