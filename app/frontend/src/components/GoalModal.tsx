@@ -27,13 +27,19 @@ export function GoalModal({ initial, t, onClose, onSave }: Props) {
   const [deadline, setDeadline] = useState(initial?.deadline || "");
   const [icon, setIcon] = useState(initial?.icon || "🎯");
   const [color, setColor] = useState(initial?.color || COLOR_OPTIONS[4]);
+  const [submitted, setSubmitted] = useState(false);
+  const parsedTarget = parseInt(target, 10);
+  const nameError = submitted && !name.trim();
+  const targetInvalid = !Number.isFinite(parsedTarget) || parsedTarget <= 0;
+  const targetError = submitted && targetInvalid;
 
   function save() {
-    if (!name || !target) return;
+    setSubmitted(true);
+    if (!name.trim() || targetInvalid) return;
     onSave({ 
       id: initial?.id, 
-      name, 
-      target: parseInt(target), 
+      name: name.trim(), 
+      target: parsedTarget, 
       saved: initial ? undefined : (saved ? parseInt(saved) : 0),
       deadline: deadline || null, 
       icon, 
@@ -50,13 +56,15 @@ export function GoalModal({ initial, t, onClose, onSave }: Props) {
         
         <div className="field">
           <label className="field-label">{t.goalName}</label>
-          <input className="field-input" type="text" value={name} onChange={e => setName(e.target.value)} />
+          <input className={`field-input ${nameError ? 'error' : ''}`} type="text" value={name} onChange={e => setName(e.target.value)} />
+          {nameError && <div className="field-error">{t.requiredField}</div>}
         </div>
         
         <div className="field-row">
           <div className="field">
             <label className="field-label">{t.target}</label>
-            <input className="field-input" type="number" value={target} onChange={e => setTarget(e.target.value)} />
+            <input className={`field-input ${targetError ? 'error' : ''}`} type="number" value={target} onChange={e => setTarget(e.target.value)} />
+            {targetError && <div className="field-error">{t.positiveAmountRequired}</div>}
           </div>
           {!initial && (
             <div className="field">

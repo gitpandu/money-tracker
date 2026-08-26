@@ -13,11 +13,16 @@ interface Props {
 export function BudgetModal({ budget, catName, t, onClose, onSave }: Props) {
   const [limit, setLimit] = useState(budget.limit_amount?.toString() || '');
   const [note, setNote] = useState(budget.note || '');
+  const [submitted, setSubmitted] = useState(false);
   const title = budget.id ? t.editBudget : t.addBudget;
+  const parsedLimit = parseInt(limit, 10);
+  const limitInvalid = !Number.isFinite(parsedLimit) || parsedLimit <= 0;
+  const limitError = submitted && limitInvalid;
 
   function save() {
-    if (!limit) return;
-    onSave({ ...budget, limit_amount: parseInt(limit, 10), note });
+    setSubmitted(true);
+    if (limitInvalid) return;
+    onSave({ ...budget, limit_amount: parsedLimit, note });
     onClose();
   }
 
@@ -28,7 +33,8 @@ export function BudgetModal({ budget, catName, t, onClose, onSave }: Props) {
         <div className="sheet-title">{title} - {catName}</div>
         <div className="field">
           <label className="field-label">{t.limit}</label>
-          <input className="field-input" type="number" value={limit} onChange={e => setLimit(e.target.value)} />
+          <input className={`field-input ${limitError ? 'error' : ''}`} type="number" value={limit} onChange={e => setLimit(e.target.value)} />
+          {limitError && <div className="field-error">{t.positiveAmountRequired}</div>}
         </div>
         <div className="field">
           <label className="field-label">{t.budgetNote}</label>

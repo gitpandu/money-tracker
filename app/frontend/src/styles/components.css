@@ -1008,6 +1008,18 @@
   border-color: var(--terra);
 }
 
+.field-input.error,
+.contrib-input.error {
+  border-color: var(--expense);
+}
+
+.field-error {
+  margin-top: 5px;
+  color: var(--expense);
+  font-size: 11px;
+  font-weight: 600;
+}
+
 .field-row {
   display: grid;
   grid-template-columns: 1fr 1fr;

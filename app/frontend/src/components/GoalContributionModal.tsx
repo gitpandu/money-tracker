@@ -38,6 +38,11 @@ export function GoalContributionModal({
   const [isWithdraw, setIsWithdraw] = useState(false);
   const [history, setHistory] = useState(initialHistory);
   const [loadingHistory, setLoadingHistory] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const parsedAmount = parseInt(amount, 10);
+  const amountInvalid = !Number.isFinite(parsedAmount) || parsedAmount <= 0;
+  const amountError = submitted && amountInvalid;
+  const dateError = submitted && !date;
 
   async function loadHistory() {
     setLoadingHistory(true);
@@ -50,14 +55,15 @@ export function GoalContributionModal({
   }
 
   async function handleContribute() {
-    const raw = parseInt(amount);
-    if (!raw || raw <= 0) return;
+    setSubmitted(true);
+    if (amountInvalid || !date) return;
 
-    const signed = isWithdraw ? -raw : raw;
+    const signed = isWithdraw ? -parsedAmount : parsedAmount;
     await onAddContribution(goal.id, signed, note.trim() || undefined, date);
     setAmount('');
     setNote('');
     setDate(todayInputValue());
+    setSubmitted(false);
     await loadHistory();
   }
 
@@ -85,13 +91,14 @@ export function GoalContributionModal({
           </div>
           <div className="contrib-inputs">
             <input
-              className="contrib-input"
+              className={`contrib-input ${amountError ? 'error' : ''}`}
               type="number"
               placeholder={t.contribAmount}
               value={amount}
               min="1"
               onChange={e => setAmount(e.target.value)}
             />
+            {amountError && <div className="field-error">{t.positiveAmountRequired}</div>}
             <input
               className="contrib-input contrib-note"
               type="text"
@@ -100,11 +107,12 @@ export function GoalContributionModal({
               onChange={e => setNote(e.target.value)}
             />
             <input
-              className="contrib-input contrib-date"
+              className={`contrib-input contrib-date ${dateError ? 'error' : ''}`}
               type="date"
               value={date}
               onChange={e => setDate(e.target.value)}
             />
+            {dateError && <div className="field-error">{t.requiredField}</div>}
           </div>
           <button
             className={`contrib-btn ${isWithdraw ? 'withdraw' : ''}`}

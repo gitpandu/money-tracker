@@ -21,9 +21,15 @@ export function TransactionModal({ initial, categories, t, onClose, onSave }: Pr
     initial?.receipt_path ? { src: initial.receipt_path, name: initial.receipt_path.split('/').pop() || 'receipt' } : null
   );
   const [removeReceipt, setRemoveReceipt] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   const cats = categories.filter(c => c.type === type);
   const parents = cats.filter(c => !c.parent_id);
+  const parsedAmount = parseInt(amount, 10);
+  const amountInvalid = !Number.isFinite(parsedAmount) || parsedAmount <= 0;
+  const amountError = submitted && amountInvalid;
+  const dateError = submitted && !date;
+  const categoryError = submitted && !catId;
 
   function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -37,9 +43,10 @@ export function TransactionModal({ initial, categories, t, onClose, onSave }: Pr
   }
 
   function save() {
-    if (!amount || !catId || !date) return;
+    setSubmitted(true);
+    if (amountInvalid || !catId || !date) return;
     onSave(
-      { id: initial?.id, type, amount: parseInt(amount), category_id: parseInt(catId), note, date },
+      { id: initial?.id, type, amount: parsedAmount, category_id: parseInt(catId), note, date },
       receipt?.file ? receipt : null,
       removeReceipt
     );
@@ -60,17 +67,19 @@ export function TransactionModal({ initial, categories, t, onClose, onSave }: Pr
         <div className="field-row">
           <div className="field">
             <label className="field-label">{t.amount}</label>
-            <input className="field-input" type="number" value={amount} onChange={e => setAmt(e.target.value)} placeholder="0" />
+            <input className={`field-input ${amountError ? 'error' : ''}`} type="number" value={amount} onChange={e => setAmt(e.target.value)} placeholder="0" />
+            {amountError && <div className="field-error">{t.positiveAmountRequired}</div>}
           </div>
           <div className="field">
             <label className="field-label">{t.date}</label>
-            <input className="field-input" type="date" value={date} onChange={e => setDate(e.target.value)} />
+            <input className={`field-input ${dateError ? 'error' : ''}`} type="date" value={date} onChange={e => setDate(e.target.value)} />
+            {dateError && <div className="field-error">{t.requiredField}</div>}
           </div>
         </div>
         <div className="field">
           <label className="field-label">{t.category}</label>
           <div className="select-wrap">
-            <select className="field-input" value={catId} onChange={e => setCat(e.target.value)}>
+            <select className={`field-input ${categoryError ? 'error' : ''}`} value={catId} onChange={e => setCat(e.target.value)}>
               <option value="">{t.selectCat}</option>
               {parents.map(p => {
                 const subs = cats.filter(c => c.parent_id === p.id);
@@ -83,6 +92,7 @@ export function TransactionModal({ initial, categories, t, onClose, onSave }: Pr
             </select>
             <div className="select-arrow">{Ico.chevron}</div>
           </div>
+          {categoryError && <div className="field-error">{t.requiredField}</div>}
         </div>
         <div className="field">
           <label className="field-label">{t.note}</label>

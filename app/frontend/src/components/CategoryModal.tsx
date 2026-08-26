@@ -29,15 +29,18 @@ export function CategoryModal({ initial, categories, t, onClose, onSave }: Props
   const [icon, setIcon] = useState(initial?.icon || "🛒");
   const [color, setColor] = useState(initial?.color || COLOR_OPTIONS[0]);
   const [parentId, setPar] = useState(initial?.parent_id?.toString() || "");
+  const [submitted, setSubmitted] = useState(false);
 
   const parentOpts = categories.filter(c => c.type === type && !c.parent_id && c.id !== initial?.id);
   const isSub = !!parentId;
+  const nameError = submitted && !name.trim();
 
   function save() {
-    if (!name) return;
+    setSubmitted(true);
+    if (!name.trim()) return;
     onSave({
       id: initial?.id,
-      name,
+      name: name.trim(),
       type,
       icon: isSub ? null : icon,
       color,
@@ -72,7 +75,8 @@ export function CategoryModal({ initial, categories, t, onClose, onSave }: Props
 
         <div className="field">
           <label className="field-label">Name</label>
-          <input className="field-input" type="text" value={name} onChange={e => setName(e.target.value)} />
+          <input className={`field-input ${nameError ? 'error' : ''}`} type="text" value={name} onChange={e => setName(e.target.value)} />
+          {nameError && <div className="field-error">{t.requiredField}</div>}
         </div>
 
         {!isSub && (
