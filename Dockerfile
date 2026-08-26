@@ -27,10 +27,12 @@ RUN npm ci --omit=dev
 # Copy compiled server
 COPY --from=builder /app/dist/server ./dist/server
 COPY --from=builder /app/dist/shared ./dist/shared
+
 # Copy compiled frontend
 COPY --from=builder /app/dist/public ./dist/public
+
 # Copy SQL migrations (not compiled, read as raw files at runtime)
-COPY --from=builder /app/server/db/migrations ./server/db/migrations
+COPY --from=builder /app/server/db/migrations ./dist/server/db/migrations
 
 ENV NODE_ENV=production
 ENV PORT=3000
